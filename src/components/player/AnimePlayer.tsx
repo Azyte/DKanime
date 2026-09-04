@@ -20,7 +20,7 @@ import {
   Layers,
   Server
 } from 'lucide-react';
-import type { AnimeEpisode, VideoQuality, VideoSource } from '../../types/anime';
+import type { AnimeEpisode, AnimeFormat, VideoQuality, VideoSource } from '../../types/anime';
 import { useSettings } from '../../context/SettingsContext';
 import { useWatch } from '../../context/WatchContext';
 import { formatTime } from '../../utils/formatters';
@@ -28,6 +28,7 @@ import { formatTime } from '../../utils/formatters';
 interface AnimePlayerProps {
   animeId: number;
   animeTitle: string;
+  format?: AnimeFormat;
   episode: AnimeEpisode;
   totalEpisodes: number;
   onNextEpisode?: () => void;
@@ -41,6 +42,7 @@ interface AnimePlayerProps {
 export const AnimePlayer: React.FC<AnimePlayerProps> = ({
   animeId,
   animeTitle,
+  format,
   episode,
   totalEpisodes,
   onNextEpisode,
@@ -531,7 +533,7 @@ export const AnimePlayer: React.FC<AnimePlayerProps> = ({
               {animeTitle}
             </h4>
             <span className="text-xs text-brand-cyan font-medium">
-              {episode.title}
+              {format === 'Movie' ? 'Film Layar Lebar (Full Movie)' : episode.title}
             </span>
           </div>
         </div>

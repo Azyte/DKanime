@@ -25,6 +25,8 @@ export interface AnimeEpisode {
   subtitles?: SubtitleTrack[];
 }
 
+export type AnimeFormat = 'TV' | 'Movie' | 'OVA' | 'ONA' | 'Special';
+
 export interface Anime {
   id: number;
   anilistId?: number;
@@ -39,6 +41,7 @@ export interface Anime {
   scoredBy?: number;
   rank?: number;
   popularity?: number;
+  format?: AnimeFormat;
   status: 'Ongoing' | 'Completed' | 'Upcoming';
   episodesCount: number;
   duration: string;

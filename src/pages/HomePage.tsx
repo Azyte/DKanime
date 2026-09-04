@@ -7,7 +7,8 @@ import {
   ChevronRight,
   Play,
   Compass,
-  Tv
+  Tv,
+  Film
 } from 'lucide-react';
 import { animeService } from '../services/animeService';
 import { GENRES_LIST } from '../services/animeData';
@@ -25,6 +26,7 @@ export const HomePage: React.FC = () => {
   const trendingAnimes = animeService.getTrending();
   const topAiring = animeService.getTopAiring();
   const topRated = animeService.getTopRated();
+  const movieAnimes = animeService.getMovies();
 
   // Filter by selected genre pill
   const filteredCatalog =
@@ -86,7 +88,7 @@ export const HomePage: React.FC = () => {
                       {item.anime.title}
                     </h4>
                     <p className="text-[11px] text-brand-cyan font-semibold mt-0.5">
-                      Episode {item.episodeNumber}
+                      {item.anime.format === 'Movie' ? 'Film Penuh (Full Movie)' : `Episode ${item.episodeNumber}`}
                     </p>
                     <p className="text-[10px] text-slate-400 font-mono mt-0.5">
                       {formatTime(item.currentTime)} / {formatTime(item.duration)}
@@ -132,6 +134,40 @@ export const HomePage: React.FC = () => {
             ))}
           </div>
         </section>
+
+        {/* Anime Movie Layar Lebar Section */}
+        {movieAnimes.length > 0 && (
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-fuchsia-600/30 to-pink-600/30 border border-fuchsia-500/40 flex items-center justify-center text-fuchsia-400 shadow-[0_0_12px_rgba(217,70,239,0.25)]">
+                  <Film className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-white tracking-tight">Anime Movie Populer</h2>
+                    <span className="px-2 py-0.5 rounded-full bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-400 text-[10px] font-bold">
+                      LAYAR LEBAR
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400">Film anime berkualitas tinggi Full HD (1080p) tanpa jeda episode</p>
+                </div>
+              </div>
+              <Link
+                to="/movies"
+                className="text-xs text-fuchsia-400 hover:text-fuchsia-300 hover:underline flex items-center gap-1 font-semibold"
+              >
+                Lihat Semua Movie <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4">
+              {movieAnimes.slice(0, 6).map((anime: Anime) => (
+                <AnimeCard key={anime.id} anime={anime} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Top Airing Season Section */}
         <section className="space-y-4">

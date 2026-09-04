@@ -18,13 +18,18 @@ const ALPHABETS = [
   'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
 ];
 
-export const AZDirectoryPage: React.FC = () => {
+interface AZDirectoryPageProps {
+  defaultFormat?: 'All' | 'TV' | 'Movie';
+}
+
+export const AZDirectoryPage: React.FC<AZDirectoryPageProps> = ({ defaultFormat }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // URL query state
   const queryParam = searchParams.get('search') || '';
   const letterParam = searchParams.get('letter') || 'ALL';
   const genreParam = searchParams.get('genre') || 'All Genres';
+  const formatParam = (searchParams.get('format') as any) || defaultFormat || 'All';
   const sortParam = (searchParams.get('sort') as any) || 'popularity';
   const statusParam = searchParams.get('status') || 'All';
   const minScoreParam = searchParams.get('minScore') ? parseFloat(searchParams.get('minScore')!) : 0;
@@ -33,6 +38,7 @@ export const AZDirectoryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState(queryParam);
   const [selectedLetter, setSelectedLetter] = useState(letterParam);
   const [selectedGenre, setSelectedGenre] = useState(genreParam);
+  const [selectedFormat, setSelectedFormat] = useState<'All' | 'TV' | 'Movie'>(formatParam);
   const [selectedSort, setSelectedSort] = useState<'popularity' | 'score' | 'title' | 'year'>(sortParam);
   const [selectedStatus, setSelectedStatus] = useState(statusParam);
   const [minScore, setMinScore] = useState<number>(minScoreParam);
@@ -42,6 +48,7 @@ export const AZDirectoryPage: React.FC = () => {
     search?: string;
     letter?: string;
     genre?: string;
+    format?: string;
     sort?: string;
     status?: string;
     minScore?: number;
@@ -50,6 +57,7 @@ export const AZDirectoryPage: React.FC = () => {
     const s = newFilters.search !== undefined ? newFilters.search : searchQuery;
     const l = newFilters.letter !== undefined ? newFilters.letter : selectedLetter;
     const g = newFilters.genre !== undefined ? newFilters.genre : selectedGenre;
+    const f = newFilters.format !== undefined ? newFilters.format : selectedFormat;
     const so = newFilters.sort !== undefined ? newFilters.sort : selectedSort;
     const st = newFilters.status !== undefined ? newFilters.status : selectedStatus;
     const ms = newFilters.minScore !== undefined ? newFilters.minScore : minScore;
@@ -57,6 +65,7 @@ export const AZDirectoryPage: React.FC = () => {
     if (s) params.set('search', s);
     if (l && l !== 'ALL') params.set('letter', l);
     if (g && g !== 'All Genres') params.set('genre', g);
+    if (f && f !== 'All') params.set('format', f);
     if (so && so !== 'popularity') params.set('sort', so);
     if (st && st !== 'All') params.set('status', st);
     if (ms > 0) params.set('minScore', ms.toString());
@@ -72,6 +81,11 @@ export const AZDirectoryPage: React.FC = () => {
   const handleGenreChange = (genre: string) => {
     setSelectedGenre(genre);
     updateParams({ genre });
+  };
+
+  const handleFormatChange = (format: 'All' | 'TV' | 'Movie') => {
+    setSelectedFormat(format);
+    updateParams({ format });
   };
 
   const handleSortChange = (sort: 'popularity' | 'score' | 'title' | 'year') => {
@@ -93,6 +107,7 @@ export const AZDirectoryPage: React.FC = () => {
     setSearchQuery('');
     setSelectedLetter('ALL');
     setSelectedGenre('All Genres');
+    setSelectedFormat('All');
     setSelectedSort('popularity');
     setSelectedStatus('All');
     setMinScore(0);
@@ -105,11 +120,12 @@ export const AZDirectoryPage: React.FC = () => {
       query: searchQuery,
       letter: selectedLetter,
       genre: selectedGenre,
+      format: selectedFormat !== 'All' ? selectedFormat : undefined,
       status: selectedStatus,
       minScore: minScore > 0 ? minScore : undefined,
       sortBy: selectedSort
     });
-  }, [searchQuery, selectedLetter, selectedGenre, selectedStatus, minScore, selectedSort]);
+  }, [searchQuery, selectedLetter, selectedGenre, selectedFormat, selectedStatus, minScore, selectedSort]);
 
   return (
     <div className="min-h-screen bg-dark-950 text-slate-100 pt-24 pb-20">
@@ -117,13 +133,15 @@ export const AZDirectoryPage: React.FC = () => {
         {/* Page Title & Intro */}
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight flex items-center gap-3">
-            Katalog Anime A-Z
+            {selectedFormat === 'Movie' ? 'Koleksi Anime Movie & Layar Lebar' : 'Katalog Anime A-Z'}
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30">
-              {filteredAnimes.length} Judul
+              {filteredAnimes.length} {selectedFormat === 'Movie' ? 'Film' : 'Judul'}
             </span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-            Cari dan jelajahi seluruh koleksi anime berdasarkan abjad nama, rating MyAnimeList, genre, status penayangan, dan popularitas.
+            {selectedFormat === 'Movie'
+              ? 'Tonton film anime layar lebar terbaik (Full Movie 1080p) dengan takarir bahasa Indonesia dan kualitas bioskop jernih.'
+              : 'Cari dan jelajahi seluruh koleksi serial anime dan film layar lebar berdasarkan abjad nama, format tayangan, rating MyAnimeList, dan genre.'}
           </p>
         </div>
 
@@ -151,7 +169,7 @@ export const AZDirectoryPage: React.FC = () => {
 
         {/* Filter Controls Panel */}
         <div className="bg-dark-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {/* Search by Name */}
             <div className="relative">
               <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 block">
@@ -170,6 +188,22 @@ export const AZDirectoryPage: React.FC = () => {
                   className="w-full pl-9 pr-3 py-2 rounded-xl bg-dark-950 border border-white/10 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-brand-cyan"
                 />
               </div>
+            </div>
+
+            {/* Format / Tipe Select */}
+            <div>
+              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 block">
+                Format / Tipe
+              </label>
+              <select
+                value={selectedFormat}
+                onChange={(e) => handleFormatChange(e.target.value as any)}
+                className="w-full px-3 py-2 rounded-xl bg-dark-950 border border-white/10 text-white text-xs focus:outline-none focus:border-brand-cyan cursor-pointer"
+              >
+                <option value="All" className="bg-dark-900">Semua Tipe</option>
+                <option value="TV" className="bg-dark-900">Serial TV (Series)</option>
+                <option value="Movie" className="bg-dark-900">🎬 Anime Movie (Layar Lebar)</option>
+              </select>
             </div>
 
             {/* Genre Select */}

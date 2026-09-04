@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { LayoutGrid, List, Play, CheckCircle2, Search } from 'lucide-react';
-import { AnimeEpisode } from '../../types/anime';
+import { LayoutGrid, List, Play, CheckCircle2, Search, Film, Sparkles } from 'lucide-react';
+import { AnimeEpisode, AnimeFormat } from '../../types/anime';
 import { useWatch } from '../../context/WatchContext';
 
 interface EpisodeListProps {
@@ -8,6 +8,9 @@ interface EpisodeListProps {
   episodes: AnimeEpisode[];
   currentEpisodeNumber: number;
   onSelectEpisode: (epNumber: number) => void;
+  format?: AnimeFormat;
+  animeTitle?: string;
+  duration?: string;
 }
 
 export const EpisodeList: React.FC<EpisodeListProps> = ({
@@ -15,6 +18,9 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
   episodes,
   currentEpisodeNumber,
   onSelectEpisode,
+  format,
+  animeTitle,
+  duration
 }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchFilter, setSearchFilter] = useState('');
@@ -22,6 +28,73 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
   const { getProgress } = useWatch();
 
   const currentProgress = getProgress(animeId);
+
+  // Dedicated movie presentation for films
+  if (format === 'Movie' || (episodes.length === 1 && format !== 'TV')) {
+    const movieEp = episodes[0];
+    return (
+      <div className="bg-dark-900 border border-white/10 rounded-2xl p-4 sm:p-5 space-y-4">
+        <div className="flex items-center justify-between border-b border-white/5 pb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-fuchsia-500/20 text-fuchsia-400 flex items-center justify-center border border-fuchsia-500/30">
+              <Film className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white leading-tight">Film Layar Lebar</h3>
+              <p className="text-[11px] text-slate-400">Format Movie (Tayangan Penuh)</p>
+            </div>
+          </div>
+          <span className="px-2.5 py-1 rounded-full bg-fuchsia-500/15 border border-fuchsia-500/30 text-fuchsia-400 text-xs font-bold shadow-[0_0_10px_rgba(217,70,239,0.2)]">
+            🎬 FULL MOVIE
+          </span>
+        </div>
+
+        {/* Movie Main Action Box */}
+        <div className="p-4 rounded-xl bg-dark-950/80 border border-white/5 space-y-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h4 className="text-sm font-bold text-white">
+                {movieEp?.title || animeTitle || 'Film Penuh'}
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                {movieEp?.synopsis || 'Tayangan film layar lebar berkualitas HD tanpa jeda per episode.'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+            <span className="px-2 py-0.5 rounded bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30 font-semibold">
+              1080p FHD
+            </span>
+            <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold">
+              Audio Jernih
+            </span>
+            <span className="px-2 py-0.5 rounded bg-white/10 text-slate-300 font-medium">
+              Durasi: {duration || movieEp?.duration || '105 min'}
+            </span>
+            <span className="px-2 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30 font-medium">
+              Sub Indo
+            </span>
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={() => onSelectEpisode(1)}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white font-bold text-xs shadow-lg shadow-fuchsia-500/25 transition-all active:scale-98"
+            >
+              <Play className="w-4 h-4 fill-white" />
+              <span>Putar Film Penuh Sekarang</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="text-[11px] text-slate-500 flex items-center gap-2 px-1">
+          <Sparkles className="w-3.5 h-3.5 text-brand-cyan" />
+          <span>Gunakan pemutar video di atas untuk memilih resolusi dan server cadangan jika diperlukan.</span>
+        </div>
+      </div>
+    );
+  }
 
   // Group episodes into chunks of 25 for easier navigation
   const chunkSize = 25;

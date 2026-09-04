@@ -40,7 +40,10 @@ export const WatchPage: React.FC = () => {
     const found = animeService.getById(animeId);
     if (found) {
       setAnime(found);
-      document.title = `Nonton ${found.title} Ep ${currentEpNumber} - DKanime`;
+      const isMovie = found.format === 'Movie' || found.episodesCount === 1;
+      document.title = isMovie
+        ? `Nonton ${found.title} (Full Movie) Sub Indo - DKanime`
+        : `Nonton ${found.title} Ep ${currentEpNumber} - DKanime`;
     }
   }, [animeId, currentEpNumber]);
 
@@ -106,7 +109,9 @@ export const WatchPage: React.FC = () => {
   };
 
   const isBookmarked = isInWatchlist(anime.id);
-  const relatedAnimes = animeService.getRelated(anime, 6);
+  const relatedAnimes = anime.format === 'Movie'
+    ? animeService.getMovies().filter(m => m.id !== anime.id).slice(0, 6)
+    : animeService.getRelated(anime, 6);
 
   const handleNextEpisode = () => {
     if (currentEpNumber < anime.episodesCount) {
@@ -151,35 +156,51 @@ export const WatchPage: React.FC = () => {
               Beranda
             </Link>
             <span>/</span>
-            <Link to="/az" className="hover:text-brand-cyan">
-              Direktori
-            </Link>
+            {anime.format === 'Movie' ? (
+              <Link to="/movies" className="hover:text-fuchsia-400 text-fuchsia-400 font-medium">
+                Anime Movie
+              </Link>
+            ) : (
+              <Link to="/az" className="hover:text-brand-cyan">
+                Direktori
+              </Link>
+            )}
             <span>/</span>
             <span className="text-slate-200 font-semibold truncate">
-              {anime.title}
+              {anime.title} {anime.format === 'Movie' ? '(Full Movie)' : ''}
             </span>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={handlePrevEpisode}
-              disabled={currentEpNumber <= 1}
-              className="p-1.5 rounded-lg bg-dark-900 border border-white/10 text-slate-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
-              title="Episode Sebelumnya"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="text-xs font-mono font-bold text-brand-cyan">
-              Ep {currentEpNumber} / {anime.episodesCount}
-            </span>
-            <button
-              onClick={handleNextEpisode}
-              disabled={currentEpNumber >= anime.episodesCount}
-              className="p-1.5 rounded-lg bg-dark-900 border border-white/10 text-slate-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
-              title="Episode Berikutnya"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            {anime.format === 'Movie' ? (
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-gradient-to-r from-fuchsia-600/20 to-pink-600/20 border border-fuchsia-500/40 text-fuchsia-300 font-bold text-xs shadow-md shadow-fuchsia-500/10">
+                <Film className="w-3.5 h-3.5" />
+                <span>Film Penuh (Full Movie)</span>
+                {anime.duration && <span className="text-slate-400 text-[11px] font-normal">• {anime.duration}</span>}
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={handlePrevEpisode}
+                  disabled={currentEpNumber <= 1}
+                  className="p-1.5 rounded-lg bg-dark-900 border border-white/10 text-slate-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                  title="Episode Sebelumnya"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="text-xs font-mono font-bold text-brand-cyan">
+                  Ep {currentEpNumber} / {anime.episodesCount}
+                </span>
+                <button
+                  onClick={handleNextEpisode}
+                  disabled={currentEpNumber >= anime.episodesCount}
+                  className="p-1.5 rounded-lg bg-dark-900 border border-white/10 text-slate-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                  title="Episode Berikutnya"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -188,6 +209,7 @@ export const WatchPage: React.FC = () => {
           <AnimePlayer
             animeId={anime.id}
             animeTitle={anime.title}
+            format={anime.format}
             episode={currentEpisode}
             totalEpisodes={anime.episodesCount}
             onNextEpisode={handleNextEpisode}
@@ -351,13 +373,16 @@ export const WatchPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column (1 Col): Episode Selector */}
+          {/* Right Column (1 Col): Episode / Movie Selector */}
           <div className="space-y-6">
             <EpisodeList
               animeId={anime.id}
               episodes={anime.episodes}
               currentEpisodeNumber={currentEpNumber}
               onSelectEpisode={(num: number) => navigate(`/watch/${anime.id}/${num}`)}
+              format={anime.format}
+              animeTitle={anime.title}
+              duration={anime.duration}
             />
           </div>
         </div>

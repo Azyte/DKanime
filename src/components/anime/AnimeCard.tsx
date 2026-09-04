@@ -71,14 +71,21 @@ export const AnimeCard: React.FC<AnimeCardProps> = ({ anime, showRank }) => {
           </div>
         )}
 
-        {/* Quality & Episode Badge */}
+        {/* Quality & Episode / Movie Badge */}
         <div className="absolute bottom-2.5 right-2.5 flex items-center gap-1.5 z-10">
           <span className="px-1.5 py-0.5 rounded bg-brand-cyan/20 border border-brand-cyan/40 text-brand-cyan text-[10px] font-bold">
             1080p
           </span>
-          <span className="px-2 py-0.5 rounded bg-dark-950/80 backdrop-blur-md border border-white/10 text-slate-200 text-[10px] font-semibold">
-            {anime.status === 'Ongoing' ? `EP ${anime.episodesCount}` : `${anime.episodesCount} EPS`}
-          </span>
+          {anime.format === 'Movie' ? (
+            <span className="px-2 py-0.5 rounded bg-gradient-to-r from-fuchsia-600 to-pink-600 border border-fuchsia-400/40 text-white text-[10px] font-bold shadow-md shadow-fuchsia-500/25 flex items-center gap-1">
+              <Film className="w-2.5 h-2.5" />
+              MOVIE
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 rounded bg-dark-950/80 backdrop-blur-md border border-white/10 text-slate-200 text-[10px] font-semibold">
+              {anime.status === 'Ongoing' ? `EP ${anime.episodesCount}` : `${anime.episodesCount} EPS`}
+            </span>
+          )}
         </div>
 
         {/* Center Hover Play Button */}

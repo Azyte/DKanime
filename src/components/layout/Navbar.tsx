@@ -42,6 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
 
   const navLinks = [
     { label: 'Beranda', path: '/' },
+    { label: '🎬 Movie', path: '/movies' },
     { label: 'A-Z Direktori', path: '/az' },
     { label: 'Top Rating', path: '/az?sort=score' },
     { label: 'Sedang Tayang', path: '/az?status=Ongoing' },

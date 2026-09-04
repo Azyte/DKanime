@@ -1,9 +1,11 @@
 import type { Anime, AnimeEpisode, SubtitleTrack, VideoSource } from '../types/anime';
-import { INITIAL_ANIMES, generateEpisodes } from './animeData';
+import { INITIAL_ANIMES, generateEpisodes, generateMovieEpisode } from './animeData';
+import type { AnimeFormat } from '../types/anime';
 
 export interface AnimeFilterOptions {
   query?: string;
   genre?: string;
+  format?: AnimeFormat | 'All';
   minScore?: number;
   maxScore?: number;
   letter?: string; // 'A'..'Z' or '#'
@@ -117,7 +119,17 @@ const KNOWN_ANIME_IDS: Record<number, { anilistId: number; malId: number }> = {
   "24": {
     "anilistId": 159831,
     "malId": 54112
-  }
+  },
+  "101": { "anilistId": 131573, "malId": 48561 },
+  "102": { "anilistId": 21519, "malId": 32281 },
+  "103": { "anilistId": 20954, "malId": 28851 },
+  "104": { "anilistId": 112151, "malId": 40456 },
+  "105": { "anilistId": 142770, "malId": 50594 },
+  "106": { "anilistId": 106286, "malId": 38826 },
+  "107": { "anilistId": 141902, "malId": 50410 },
+  "108": { "anilistId": 199, "malId": 199 },
+  "109": { "anilistId": 431, "malId": 431 },
+  "110": { "anilistId": 109979, "malId": 36699 }
 };
 
 class AnimeService {
@@ -146,6 +158,11 @@ class AnimeService {
     return this.animes;
   }
 
+  // Get all movies
+  getMovies(): Anime[] {
+    return this.animes.filter((a) => a.format === 'Movie');
+  }
+
   // Get anime by ID (from catalog, custom list, or live search cache)
   getById(id: number): Anime | undefined {
     const found = this.animes.find((a) => a.id === id);
@@ -169,6 +186,13 @@ class AnimeService {
   // Filter & Search animes
   filter(options: AnimeFilterOptions = {}): Anime[] {
     let result = [...this.animes];
+
+    // Format filter
+    if (options.format && options.format !== 'All') {
+      result = result.filter(
+        (a) => a.format?.toLowerCase() === options.format!.toLowerCase()
+      );
+    }
 
     // Search query
     if (options.query && options.query.trim() !== '') {
@@ -283,34 +307,40 @@ class AnimeService {
       if (!json.data || !Array.isArray(json.data)) return [];
 
       const fetchedAnimes: Anime[] = json.data.map((item: any) => {
-        const episodesCount = item.episodes || 12;
+        const isMovie = item.type === 'Movie' || item.episodes === 1;
+        const episodesCount = isMovie ? 1 : (item.episodes || 12);
+        const format: AnimeFormat = isMovie ? 'Movie' : 'TV';
+        const animeId = item.mal_id + 100000;
+        const durStr = item.duration || (isMovie ? '105 min' : '24 min');
+        const img = item.images?.webp?.large_image_url || item.images?.jpg?.large_image_url || 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx151807-it355ZgzquUd.png';
+        const episodes = isMovie
+          ? generateMovieEpisode(animeId, item.title, durStr, img)
+          : generateEpisodes(animeId, item.title, Math.min(episodesCount, 24), img);
+
         return {
-          id: item.mal_id + 100000, // Offset to avoid collisions
+          id: animeId,
+          malId: item.mal_id,
           title: item.title,
           japaneseTitle: item.title_japanese,
           romajiTitle: item.title_synonyms?.[0] || item.title,
-          synopsis: item.synopsis || 'Tidak ada deskripsi tersedia.',
-          posterImage:
-            item.images?.webp?.large_image_url ||
-            item.images?.jpg?.large_image_url ||
-            'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=85',
-          coverImage:
-            item.images?.webp?.large_image_url ||
-            'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
+          synopsis: item.synopsis || (isMovie ? `Nonton film ${item.title} sub Indo.` : 'Deskripsi anime.'),
+          posterImage: img,
+          coverImage: img,
           score: item.score || 7.5,
           scoredBy: item.scored_by || 10000,
           rank: item.rank || 100,
           popularity: item.popularity || 100,
+          format,
           status: item.status === 'Currently Airing' ? 'Ongoing' : 'Completed',
           episodesCount,
-          duration: item.duration || '24 min',
+          duration: durStr,
           season: item.season || 'Unknown',
           year: item.year || new Date().getFullYear(),
           genres: item.genres?.map((g: any) => g.name) || ['Action'],
           studios: item.studios?.map((s: any) => s.name) || ['Unknown'],
           trailerUrl: item.trailer?.embed_url,
           ratingBadge: item.rating?.includes('17+') ? '17+' : '13+',
-          episodes: generateEpisodes(item.mal_id + 100000, item.title, Math.min(episodesCount, 24))
+          episodes
         };
       });
 
@@ -339,28 +369,39 @@ class AnimeService {
       }
 
       const results: Anime[] = json.results.map((item: any) => {
-        const epCount = item.episodes || 12;
+        const isMovie = item.format === 'MOVIE' || item.format === 'Movie' || item.episodes === 1;
+        const epCount = isMovie ? 1 : (item.episodes || 12);
+        const format: AnimeFormat = isMovie ? 'Movie' : 'TV';
         const animeId = item.id || (item.malId ? item.malId + 100000 : Math.floor(Math.random() * 90000) + 10000);
+        const durStr = isMovie ? (item.duration ? `${item.duration} min` : '105 min') : '24 min';
+        const cover = item.coverImage || 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx151807-it355ZgzquUd.png';
+        const episodes = isMovie
+          ? generateMovieEpisode(animeId, item.title, durStr, cover)
+          : generateEpisodes(animeId, item.title, Math.min(epCount, 24), cover);
+
         return {
           id: animeId,
           anilistId: item.id,
           malId: item.malId,
           title: item.title,
           romajiTitle: item.title,
-          synopsis: `Nonton anime ${item.title} sub Indo / English dengan resolusi HD 1080p, audio jernih, dan subtitle lengkap di DKanime.`,
-          posterImage: item.coverImage || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=85',
-          coverImage: item.coverImage || 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
+          synopsis: isMovie
+            ? `Nonton film anime layar lebar ${item.title} sub Indo / English resolusi Full HD 1080p di DKanime.`
+            : `Nonton anime ${item.title} sub Indo / English resolusi HD 1080p, audio jernih, dan subtitle lengkap di DKanime.`,
+          posterImage: cover,
+          coverImage: cover,
           score: 8.4,
           scoredBy: 15000,
           rank: 50,
           popularity: 50,
+          format,
           status: item.status === 'RELEASING' ? 'Ongoing' : 'Completed',
           episodesCount: epCount,
-          duration: '24 min',
+          duration: durStr,
           year: new Date().getFullYear(),
           genres: ['Action', 'Adventure', 'Animation'],
           ratingBadge: '13+',
-          episodes: generateEpisodes(animeId, item.title, Math.min(epCount, 24))
+          episodes
         };
       });
 

@@ -1,44 +1,15 @@
 import type { Anime, AnimeEpisode, VideoSource } from '../types/anime';
 
-// Helper to generate mock episodes with multi-quality streams
+// Helper to generate anime episodes
 export const generateEpisodes = (
   animeId: number,
-  _animeTitle: string,
+  animeTitle: string,
   count: number,
   fallbackThumbnail?: string
 ): AnimeEpisode[] => {
   const episodes: AnimeEpisode[] = [];
-  const titles = [
-    'Kebangkitan Sang Pemburu Terkuat',
-    'Pertemuan yang Ditakdirkan di Balik Kabut',
-    'Ujian Mematikan di Kedalaman Dungeon',
-    'Rahasia Kekuatan yang Terpendam',
-    'Pertarungan Sengit di Wilayah Terlarang',
-    'Pengorbanan dan Tekad Membara',
-    'Bayangan Masa Lalu yang Menghantui',
-    'Titik Balik Takdir',
-    'Serangan Balik yang Tak Terduga',
-    'Puncak Pertempuran Para Raja',
-    'Cahaya Harapan Baru',
-    'Menuju Era yang Berbeda',
-    'Janji di Bawah Langit Berbintang',
-    'Darah dan Air Mata',
-    'Kebangkitan Raja Kegelapan',
-    'Langkah Terakhir Menuju Keabadian',
-    'Pertarungan Dua Takdir',
-    'Kekuatan Sejati Tanpa Batas',
-    'Badai Sebelum Ketenangan',
-    'Akhir dari Permulaan',
-    'Penebusan Dosa Masa Lalu',
-    'Hati yang Tak Tertundukkan',
-    'Pintu Menuju Dunia Lain',
-    'Legenda Baru Telah Lahir'
-  ];
 
   for (let i = 1; i <= count; i++) {
-    const titleIndex = (i - 1) % titles.length;
-    const epTitle = titles[titleIndex];
-
     const sources: VideoSource[] = [
       {
         quality: '1080p',
@@ -69,16 +40,61 @@ export const generateEpisodes = (
     episodes.push({
       id: animeId * 1000 + i,
       number: i,
-      title: `Episode ${i}: ${epTitle}`,
-      duration: '24:15',
-      thumbnail: fallbackThumbnail || 'https://images.unsplash.com/photo-1578632767115?auto=format&fit=crop&w=600&q=80',
-      synopsis: `Di episode ${i}, tensi semakin memuncak saat pertempuran strategis dimulai. Strategi tak terduga mengubah jalannya konflik.`,
+      title: `Episode ${i}`,
+      duration: '24:00',
+      thumbnail: fallbackThumbnail || 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx151807-it355ZgzquUd.png',
+      synopsis: `Tonton ${animeTitle} Episode ${i} dengan takarir / subtitle Indonesia dan resolusi Full HD 1080p di DKanime.`,
       sources,
       embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0'
     });
   }
 
   return episodes;
+};
+
+// Helper to generate a single full-length Movie entry
+export const generateMovieEpisode = (
+  animeId: number,
+  animeTitle: string,
+  durationStr: string,
+  coverImage: string,
+  trailerId?: string
+): AnimeEpisode[] => {
+  const embedUrl = trailerId
+    ? `https://www.youtube.com/embed/${trailerId}?autoplay=0`
+    : 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0';
+
+  return [
+    {
+      id: animeId * 1000 + 1,
+      number: 1,
+      title: `Film Penuh: ${animeTitle}`,
+      duration: durationStr,
+      thumbnail: coverImage,
+      synopsis: `Tonton film layar lebar penuh ${animeTitle} kualitas Full HD 1080p dengan audio jernih dan takarir / subtitle Indonesia di DKanime.`,
+      sources: [
+        {
+          quality: '1080p',
+          url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+          format: 'mp4',
+          label: '1080p FHD (Ultra Clear)'
+        },
+        {
+          quality: '720p',
+          url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+          format: 'mp4',
+          label: '720p HD (Recommended)'
+        },
+        {
+          quality: '480p',
+          url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+          format: 'mp4',
+          label: '480p SD (Data Saver)'
+        }
+      ],
+      embedUrl
+    }
+  ];
 };
 
 export const INITIAL_ANIMES: Anime[] = [
@@ -93,7 +109,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8,
     scoredBy: 842100,
     rank: 1,
-    popularity: 1,
+    popularity: 1,format: 'TV',
+    
     status: 'Ongoing',
     episodesCount: 12,
     duration: '24 min per ep',
@@ -116,7 +133,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 9.1,
     scoredBy: 620000,
     rank: 2,
-    popularity: 2,
+    popularity: 2,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 28,
     duration: '24 min per ep',
@@ -138,7 +156,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.6,
     scoredBy: 910400,
     rank: 4,
-    popularity: 3,
+    popularity: 3,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 23,
     duration: '23 min per ep',
@@ -160,7 +179,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.5,
     scoredBy: 1250000,
     rank: 3,
-    popularity: 4,
+    popularity: 4,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 28,
     duration: '24 min per ep',
@@ -182,7 +202,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.3,
     scoredBy: 530000,
     rank: 8,
-    popularity: 5,
+    popularity: 5,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 8,
     duration: '25 min per ep',
@@ -204,7 +225,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.7,
     scoredBy: 1540000,
     rank: 5,
-    popularity: 6,
+    popularity: 6,format: 'TV',
+    
     status: 'Ongoing',
     episodesCount: 1110,
     duration: '24 min per ep',
@@ -226,7 +248,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.3,
     scoredBy: 780000,
     rank: 12,
-    popularity: 7,
+    popularity: 7,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 12,
     duration: '24 min per ep',
@@ -248,7 +271,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.4,
     scoredBy: 410000,
     rank: 10,
-    popularity: 8,
+    popularity: 8,format: 'TV',
+    
     status: 'Ongoing',
     episodesCount: 13,
     duration: '24 min per ep',
@@ -270,7 +294,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.8,
     scoredBy: 490000,
     rank: 6,
-    popularity: 9,
+    popularity: 9,format: 'TV',
+    
     status: 'Ongoing',
     episodesCount: 26,
     duration: '24 min per ep',
@@ -292,7 +317,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.7,
     scoredBy: 390000,
     rank: 9,
-    popularity: 10,
+    popularity: 10,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 12,
     duration: '23 min per ep',
@@ -314,7 +340,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.5,
     scoredBy: 680000,
     rank: 14,
-    popularity: 11,
+    popularity: 11,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 10,
     duration: '24 min per ep',
@@ -336,7 +363,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.3,
     scoredBy: 320000,
     rank: 11,
-    popularity: 12,
+    popularity: 12,format: 'TV',
+    
     status: 'Ongoing',
     episodesCount: 12,
     duration: '24 min per ep',
@@ -358,7 +386,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.4,
     scoredBy: 2800000,
     rank: 15,
-    popularity: 13,
+    popularity: 13,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 37,
     duration: '23 min per ep',
@@ -380,7 +409,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 9,
     scoredBy: 2200000,
     rank: 2,
-    popularity: 14,
+    popularity: 14,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 64,
     duration: '24 min per ep',
@@ -402,7 +432,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.9,
     scoredBy: 1800000,
     rank: 7,
-    popularity: 15,
+    popularity: 15,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 148,
     duration: '23 min per ep',
@@ -424,7 +455,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.9,
     scoredBy: 520000,
     rank: 6,
-    popularity: 16,
+    popularity: 16,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 13,
     duration: '23 min per ep',
@@ -446,7 +478,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.1,
     scoredBy: 390000,
     rank: 13,
-    popularity: 17,
+    popularity: 17,format: 'TV',
+    
     status: 'Ongoing',
     episodesCount: 24,
     duration: '23 min per ep',
@@ -468,7 +501,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.9,
     scoredBy: 1400000,
     rank: 3,
-    popularity: 18,
+    popularity: 18,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 24,
     duration: '24 min per ep',
@@ -490,7 +524,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8,
     scoredBy: 590000,
     rank: 22,
-    popularity: 19,
+    popularity: 19,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 12,
     duration: '24 min per ep',
@@ -512,7 +547,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.8,
     scoredBy: 460000,
     rank: 8,
-    popularity: 20,
+    popularity: 20,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 24,
     duration: '24 min per ep',
@@ -534,7 +570,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.5,
     scoredBy: 980000,
     rank: 16,
-    popularity: 21,
+    popularity: 21,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 13,
     duration: '24 min per ep',
@@ -556,7 +593,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 7.7,
     scoredBy: 180000,
     rank: 45,
-    popularity: 22,
+    popularity: 22,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 12,
     duration: '23 min per ep',
@@ -578,7 +616,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 8.3,
     scoredBy: 580000,
     rank: 25,
-    popularity: 23,
+    popularity: 23,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 112,
     duration: '24 min per ep',
@@ -600,7 +639,8 @@ export const INITIAL_ANIMES: Anime[] = [
     score: 7.6,
     scoredBy: 240000,
     rank: 52,
-    popularity: 24,
+    popularity: 24,format: 'TV',
+    
     status: 'Completed',
     episodesCount: 12,
     duration: '24 min per ep',
@@ -610,6 +650,246 @@ export const INITIAL_ANIMES: Anime[] = [
     studios: ['BUG FILMS'],
     ratingBadge: '17+',
     episodes: generateEpisodes(24, 'Zom 100', 12, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/159831-FWfdyqpxhLli.jpg')
+  },
+  {
+    id: 101,
+    anilistId: 131573,
+    malId: 48561,
+    title: "JUJUTSU KAISEN 0",
+    japaneseTitle: "呪術廻戦 0",
+    romajiTitle: "Jujutsu Kaisen 0",
+    synopsis: "Yuta Okkotsu is a nervous high school student who is suffering from a serious problem—his childhood friend Rika has turned into a curse and won't leave him alone. Since Rika is no ordinary curse, his plight is noticed by Satoru Gojo, a teacher at Jujutsu High, a school where fledgling exorcists learn how to combat curses. Gojo convinces Yuta to enr",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx131573-rpl82vDEDRm6.jpg",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/131573-3veuVz5p0z2I.jpg",
+    score: 8.3,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "1j 45m (105 min)",
+    year: 2021,
+    genres: ["Action","Supernatural"],
+    studios: ["MAPPA"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(101, "JUJUTSU KAISEN 0", "1j 45m (105 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/131573-3veuVz5p0z2I.jpg", "2docezZl574")
+  },
+  {
+    id: 102,
+    anilistId: 21519,
+    malId: 32281,
+    title: "Kimi no Na wa. (Your Name)",
+    japaneseTitle: "君の名は。",
+    romajiTitle: "Kimi no Na wa.",
+    synopsis: "Mitsuha Miyamizu, a high school girl, yearns to live the life of a boy in the bustling city of Tokyo—a dream that stands in stark contrast to her present life in the countryside. Meanwhile in the city, Taki Tachibana lives a busy life as a high school student while juggling his part-time job and hopes for a future in architecture. One day, Mitsuha",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21519-SUo3ZQuCbYhJ.png",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/21519-1ayMXgNlmByb.jpg",
+    score: 8.6,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "1j 47m (107 min)",
+    year: 2016,
+    genres: ["Drama","Romance","Supernatural"],
+    studios: ["CoMix Wave"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(102, "Kimi no Na wa. (Your Name)", "1j 47m (107 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/21519-1ayMXgNlmByb.jpg", "k4xGqY5IDBE")
+  },
+  {
+    id: 103,
+    anilistId: 20954,
+    malId: 28851,
+    title: "Koe no Katachi (A Silent Voice)",
+    japaneseTitle: "聲の形",
+    romajiTitle: "Koe no Katachi",
+    synopsis: "After transferring into a new school, a deaf girl, Shouko Nishimiya, is bullied by the popular Shouya Ishida. As Shouya continues to bully Shouko, the class turns its back on him. Shouko transfers and Shouya grows up as an outcast. Alone and depressed, the regretful Shouya finds Shouko to make amends. (Source: Eleven Arts)",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20954-sYRfE5jQRtSB.jpg",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/20954-f30bHMXa5Qoe.jpg",
+    score: 8.8,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "2j 10m (130 min)",
+    year: 2016,
+    genres: ["Drama","Romance","Slice of Life"],
+    studios: ["Kyoto Animation"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(103, "Koe no Katachi (A Silent Voice)", "2j 10m (130 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/20954-f30bHMXa5Qoe.jpg", "Sy4bPCuzfiQ")
+  },
+  {
+    id: 104,
+    anilistId: 112151,
+    malId: 40456,
+    title: "Demon Slayer: Mugen Train (Movie)",
+    japaneseTitle: "鬼滅の刃 無限列車編",
+    romajiTitle: "Kimetsu no Yaiba: Mugen Ressha-hen",
+    synopsis: "This Demon Slayer movie sees Tanjiro Kamado and friends from the Demon Slayer corps board the Infinity Train on a new mission to investigate a mysterious series of disappearances, perpetrated by a demon who has been tormenting people and killing the demon slayers who oppose it.",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx112151-1qlQwPB1RrJe.png",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/112151-eHCBz19nf2yC.jpg",
+    score: 8.4,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "1j 57m (117 min)",
+    year: 2020,
+    genres: ["Action","Adventure","Drama","Fantasy","Mystery","Supernatural"],
+    studios: ["ufotable"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(104, "Demon Slayer: Mugen Train (Movie)", "1j 57m (117 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/112151-eHCBz19nf2yC.jpg", "23riEOmDOgM")
+  },
+  {
+    id: 105,
+    anilistId: 142770,
+    malId: 50594,
+    title: "Suzume no Tojimari",
+    japaneseTitle: "すずめの戸締まり",
+    romajiTitle: "Suzume no Tojimari",
+    synopsis: "The story follows Suzume, a 17-year-old girl from a quiet Kyushu town who meets a young man looking for a door. They find a door within ruins in the mountain, and Suzume opens it. Soon, more doors begin to open around Japan, bringing disasters from the other side. The film depicts Suzume's liberation and growth, as she closes the doors that are cau",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx142770-dDaDIRnsv5jN.jpg",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/142770-YgESt2HJXlNg.jpg",
+    score: 8.1,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "2j 1m (121 min)",
+    year: 2022,
+    genres: ["Adventure","Fantasy","Mystery","Supernatural"],
+    studios: ["CoMix Wave"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(105, "Suzume no Tojimari", "2j 1m (121 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/142770-YgESt2HJXlNg.jpg", "g0JMPkn7Wuo")
+  },
+  {
+    id: 106,
+    anilistId: 106286,
+    malId: 38826,
+    title: "Weathering With You (Tenki no Ko)",
+    japaneseTitle: "天気の子",
+    romajiTitle: "Tenki no Ko",
+    synopsis: "High school student Hodaka leaves his home on an isolated island and moves to Tokyo, but he immediately becomes broke. He lives his days in isolation, but finally finds a job as a writer for a shady occult magazine. After he starts his job, the weather has been rainy day after day. In a corner of the crowded and busy city, Hodaka meets a young woma",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx106286-5COcpd0J9VbL.png",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/106286-3oKwiwjd7Wkm.jpg",
+    score: 8.1,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "1j 55m (115 min)",
+    year: 2019,
+    genres: ["Drama","Romance","Slice of Life","Supernatural"],
+    studios: ["CoMix Wave"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(106, "Weathering With You (Tenki no Ko)", "1j 55m (115 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/106286-3oKwiwjd7Wkm.jpg", "Q6iK6DjV_iE")
+  },
+  {
+    id: 107,
+    anilistId: 141902,
+    malId: 50410,
+    title: "One Piece Film: RED",
+    japaneseTitle: "ONE PIECE FILM RED",
+    romajiTitle: "ONE PIECE FILM: RED",
+    synopsis: "An almighty voice. With fiery red locks. The story takes place on an island where Uta, the world’s favorite diva, performs for the first time in public. Uta’s singing voice, which she sings with while concealing her true identity, has been described as “otherworldly,” and while the venue is filled with the Straw Hats led by Luffy, pirates, navy, an",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx141902-fTyoTk8F8qOl.jpg",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/141902-SvnRSXnN7DWC.jpg",
+    score: 7.8,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "1j 55m (115 min)",
+    year: 2022,
+    genres: ["Action","Adventure","Comedy","Drama","Fantasy","Music"],
+    studios: ["Toei Animation"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(107, "One Piece Film: RED", "1j 55m (115 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/141902-SvnRSXnN7DWC.jpg", "YAN45KAL5lg")
+  },
+  {
+    id: 108,
+    anilistId: 199,
+    malId: 199,
+    title: "Spirited Away (Sen to Chihiro)",
+    japaneseTitle: "千と千尋の神隠し",
+    romajiTitle: "Sen to Chihiro no Kamikakushi",
+    synopsis: "On the way to their new home, 10-year-old Chihiro Ogino's family stumbles upon a deserted theme park. Intrigued, the family investigates the park, though unbeknownst to them, it is secretly inhabited by spirits who sleep by day and appear at night. When Chihiro's mother and father eat food from a restaurant in the street, angry spirits turn them in",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx199-sWefXJvXkDOb.jpg",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/199-Sm2RU5PSqw7T.jpg",
+    score: 8.6,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "2j 5m (125 min)",
+    year: 2001,
+    genres: ["Adventure","Drama","Fantasy","Supernatural"],
+    studios: ["Studio Ghibli"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(108, "Spirited Away (Sen to Chihiro)", "2j 5m (125 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/199-Sm2RU5PSqw7T.jpg", "ByXuk9QqQkk")
+  },
+  {
+    id: 109,
+    anilistId: 431,
+    malId: 431,
+    title: "Howl's Moving Castle",
+    japaneseTitle: "ハウルの動く城",
+    romajiTitle: "Howl no Ugoku Shiro",
+    synopsis: "Sophie, a quiet girl working in a hat shop, finds her life thrown into turmoil when she is literally swept off her feet by a handsome but mysterious wizard named Howl. The vain and vengeful Witch of the Waste, jealous of their friendship, puts a spell on Sophie. In a life-changing adventure, Sophie climbs aboard Howl's magnificent flying castle and",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx431-o8Lj3XkjHm2k.jpg",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/431-fLBlvTgdqLCz.jpg",
+    score: 8.5,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "1j 59m (119 min)",
+    year: 2004,
+    genres: ["Adventure","Drama","Fantasy","Romance"],
+    studios: ["Studio Ghibli"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(109, "Howl's Moving Castle", "1j 59m (119 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/431-fLBlvTgdqLCz.jpg", "iwROgK94zcM")
+  },
+  {
+    id: 110,
+    anilistId: 109979,
+    malId: 36699,
+    title: "The Boy and the Heron",
+    japaneseTitle: "君たちはどう生きるか",
+    romajiTitle: "Kimitachi wa Dou Ikiru ka",
+    synopsis: "While the Second World War rages, the teenage Mahito, haunted by his mother’s tragic death, is relocated from Tokyo to the serene rural home of his new stepmother Natsuko, a woman who bears a striking resemblance to the boy’s mother. As he tries to adjust, this strange new world grows even stranger following the appearance of a persistent gray hero",
+    posterImage: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx109979-BRHXpBkCw4oc.jpg",
+    coverImage: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/109979-eeUPfBXMEflG.jpg",
+    score: 7.7,
+    scoredBy: 350000,
+    rank: 10,
+    popularity: 5,
+    format: 'Movie',
+    status: 'Completed',
+    episodesCount: 1,
+    duration: "2j 4m (124 min)",
+    year: 2023,
+    genres: ["Adventure","Drama","Fantasy","Supernatural"],
+    studios: ["Studio Ghibli"],
+    ratingBadge: '13+',
+    episodes: generateMovieEpisode(110, "The Boy and the Heron", "2j 4m (124 min)", "https://s4.anilist.co/file/anilistcdn/media/anime/banner/109979-eeUPfBXMEflG.jpg", "f7EDFdA10pg")
   }
 ];
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Bookmark, Star, ChevronLeft, ChevronRight, Info } from 'lucide-react';
+import { Play, Bookmark, Star, ChevronLeft, ChevronRight, Info, Film } from 'lucide-react';
 import { Anime } from '../../types/anime';
 import { useWatch } from '../../context/WatchContext';
 import { formatScore } from '../../utils/formatters';
@@ -87,12 +87,21 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ animes }) => {
             <span className="px-2 py-0.5 rounded bg-brand-cyan/20 border border-brand-cyan/30 text-brand-cyan font-bold text-xs">
               1080p FHD
             </span>
-            <span className="px-2 py-0.5 rounded bg-white/10 text-white font-medium text-xs">
-              {currentAnime.status}
-            </span>
-            {currentAnime.year && <span>{currentAnime.year}</span>}
-            <span>•</span>
-            <span>{currentAnime.episodesCount} Episode</span>
+            {currentAnime.format === 'Movie' ? (
+              <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-fuchsia-600 to-pink-600 border border-fuchsia-400/40 text-white font-bold text-xs shadow-md shadow-fuchsia-500/20 flex items-center gap-1">
+                <Film className="w-3 h-3" />
+                FILM LAYAR LEBAR (MOVIE)
+              </span>
+            ) : (
+              <>
+                <span className="px-2 py-0.5 rounded bg-white/10 text-white font-medium text-xs">
+                  {currentAnime.status}
+                </span>
+                {currentAnime.year && <span>{currentAnime.year}</span>}
+                <span>•</span>
+                <span>{currentAnime.episodesCount} Episode</span>
+              </>
+            )}
           </div>
 
           {/* Synopsis */}
@@ -119,7 +128,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ animes }) => {
               className="flex items-center gap-2.5 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-purple hover:from-brand-cyanGlow hover:to-brand-purple text-dark-950 font-bold text-sm transition-all duration-300 shadow-xl shadow-brand-cyan/25 hover:shadow-brand-cyan/40 hover:scale-[1.02] active:scale-95 focus:outline-none"
             >
               <Play className="w-5 h-5 fill-dark-950 text-dark-950 ml-0.5" />
-              Tonton Sekarang
+              {currentAnime.format === 'Movie' ? 'Tonton Full Movie' : 'Tonton Sekarang'}
             </button>
 
             <button

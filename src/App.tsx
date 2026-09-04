@@ -48,6 +48,7 @@ export const AppContent: React.FC = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/watch/:id/:episode?" element={<WatchPage />} />
+          <Route path="/movies" element={<AZDirectoryPage defaultFormat="Movie" />} />
           <Route path="/az" element={<AZDirectoryPage />} />
           <Route path="/watchlist" element={<WatchlistPage />} />
           <Route path="*" element={<HomePage />} />
