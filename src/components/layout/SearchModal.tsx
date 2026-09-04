@@ -46,14 +46,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
 
     setIsSearching(true);
     const timeout = setTimeout(async () => {
-      // Search local first
+      // Search local catalog first
       const local = animeService.filter({ query });
       if (local.length > 0) {
         setResults(local.slice(0, 8));
         setIsSearching(false);
       } else {
-        // Try live search
-        const live = await animeService.searchJikanLive(query);
+        // Try live streaming search
+        const live = await animeService.searchAnimeLive(query);
         setResults(live.slice(0, 8));
         setIsSearching(false);
       }

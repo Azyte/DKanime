@@ -32,6 +32,10 @@ export const WatchPage: React.FC = () => {
   const [isLightsOff, setIsLightsOff] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
+  // Live Stream state from AniVault / HLS API
+  const [liveStream, setLiveStream] = useState<any>(null);
+  const [isFetchingStream, setIsFetchingStream] = useState(false);
+
   useEffect(() => {
     const found = animeService.getById(animeId);
     if (found) {
@@ -39,6 +43,31 @@ export const WatchPage: React.FC = () => {
       document.title = `Nonton ${found.title} Ep ${currentEpNumber} - DKanime`;
     }
   }, [animeId, currentEpNumber]);
+
+  // Fetch real stream for current anime & episode
+  useEffect(() => {
+    let isMounted = true;
+    if (!anime) return;
+
+    const fetchStream = async () => {
+      setIsFetchingStream(true);
+      try {
+        const stream = await animeService.getEpisodeStream(anime, currentEpNumber);
+        if (isMounted && stream) {
+          setLiveStream(stream);
+        }
+      } catch (err) {
+        console.warn('Stream fetch error:', err);
+      } finally {
+        if (isMounted) setIsFetchingStream(false);
+      }
+    };
+
+    fetchStream();
+    return () => {
+      isMounted = false;
+    };
+  }, [anime?.id, currentEpNumber]);
 
   if (!anime) {
     return (
@@ -58,8 +87,8 @@ export const WatchPage: React.FC = () => {
     );
   }
 
-  // Find current episode or fallback to first
-  const currentEpisode: AnimeEpisode =
+  // Find current episode or fallback to first, merged with live sources
+  const baseEpisode: AnimeEpisode =
     anime.episodes.find((ep: AnimeEpisode) => ep.number === currentEpNumber) ||
     anime.episodes[0] || {
       id: 1,
@@ -68,6 +97,13 @@ export const WatchPage: React.FC = () => {
       duration: '24:00',
       sources: []
     };
+
+  const currentEpisode: AnimeEpisode = {
+    ...baseEpisode,
+    sources: liveStream && liveStream.sources.length > 0 ? liveStream.sources : baseEpisode.sources,
+    embedUrl: liveStream?.embedUrl || baseEpisode.embedUrl,
+    subtitles: liveStream?.subtitles || baseEpisode.subtitles
+  };
 
   const isBookmarked = isInWatchlist(anime.id);
   const relatedAnimes = animeService.getRelated(anime, 6);
@@ -166,13 +202,27 @@ export const WatchPage: React.FC = () => {
         {/* Server & Streaming Information Pill */}
         <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-dark-900 border border-white/5 mb-6 text-xs">
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Streaming Aktif: Multi-Resolution HD
-            </span>
+            {isFetchingStream ? (
+              <span className="flex items-center gap-1.5 text-brand-cyan font-semibold animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-brand-cyan animate-ping" />
+                Menghubungkan ke API Streaming Anime...
+              </span>
+            ) : liveStream ? (
+              <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                Live Stream Terhubung: {liveStream.server || 'HLS Master'} (HD 1080p)
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                Streaming Aktif: Multi-Resolution HD
+              </span>
+            )}
             <span className="hidden sm:inline text-slate-500">•</span>
             <span className="text-slate-400 hidden sm:inline">
-              Pilihan: 1080p, 720p, 480p, 360p
+              {liveStream?.subtitles && liveStream.subtitles.length > 0
+                ? `${liveStream.subtitles.length} Subtitle Tersedia (VTT)`
+                : 'Pilihan Kualitas: Auto, 1080p, 720p, 480p, 360p'}
             </span>
           </div>
 
@@ -181,7 +231,7 @@ export const WatchPage: React.FC = () => {
               onClick={() => setIsSettingsOpen(true)}
               className="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-brand-cyan font-semibold transition-colors"
             >
-              Konfigurasi API Key
+              Pengaturan Player
             </button>
             <button
               onClick={handleShare}

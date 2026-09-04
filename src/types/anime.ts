@@ -1,4 +1,10 @@
-export type VideoQuality = '1080p' | '720p' | '480p' | '360p';
+export type VideoQuality = 'auto' | '1080p' | '720p' | '480p' | '360p';
+
+export interface SubtitleTrack {
+  url: string;
+  lang: string;
+  default?: boolean;
+}
 
 export interface VideoSource {
   quality: VideoQuality;
@@ -16,10 +22,13 @@ export interface AnimeEpisode {
   synopsis?: string;
   sources: VideoSource[];
   embedUrl?: string;
+  subtitles?: SubtitleTrack[];
 }
 
 export interface Anime {
   id: number;
+  anilistId?: number;
+  malId?: number;
   title: string;
   japaneseTitle?: string;
   romajiTitle?: string;

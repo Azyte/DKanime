@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Hls from 'hls.js';
 import {
   Play,
   Pause,
@@ -16,7 +17,8 @@ import {
   Sun,
   PictureInPicture2,
   ChevronRight,
-  Layers
+  Layers,
+  Server
 } from 'lucide-react';
 import type { AnimeEpisode, VideoQuality, VideoSource } from '../../types/anime';
 import { useSettings } from '../../context/SettingsContext';
@@ -77,14 +79,94 @@ export const AnimePlayer: React.FC<AnimePlayerProps> = ({
   const [countdownSeconds, setCountdownSeconds] = useState(5);
   const [introToast, setIntroToast] = useState(false);
 
-  // Get current active video source based on selected quality
-  const currentSource: VideoSource =
-    episode.sources.find((s) => s.quality === selectedQuality) ||
-    episode.sources[0] || {
+  // HLS Instance ref & parsed levels
+  const hlsRef = useRef<Hls | null>(null);
+  const [hlsLevels, setHlsLevels] = useState<{ id: number; height: number; bitrate: number }[]>([]);
+
+  // Get current active video source based on active server & selected quality
+  const currentSource: VideoSource = (() => {
+    if (activeServer === 'server2' && episode.sources.length > 1) {
+      return episode.sources[1];
+    }
+    const found = episode.sources.find((s) => s.quality === selectedQuality);
+    return found || episode.sources[0] || {
       quality: '1080p',
       url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       format: 'mp4'
     };
+  })();
+
+  // Initialize and attach HLS stream or native video source
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+
+    if (activeServer === 'embed') {
+      return;
+    }
+
+    const currentUrl = currentSource.url;
+    const isHls = currentSource.format === 'hls' || currentUrl.includes('.m3u8') || currentUrl.includes('/proxy/hls');
+
+    if (isHls && Hls.isSupported()) {
+      const hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: true,
+        backBufferLength: 90
+      });
+      hlsRef.current = hls;
+
+      hls.loadSource(currentUrl);
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, (_event, data) => {
+        const levels = data.levels.map((lvl, index) => ({
+          id: index,
+          height: lvl.height,
+          bitrate: lvl.bitrate
+        }));
+        setHlsLevels(levels);
+        if (settings.autoPlay) {
+          video.play().catch(() => {});
+        }
+      });
+
+      hls.on(Hls.Events.ERROR, (_event, data) => {
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              hls.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              hls.recoverMediaError();
+              break;
+            default:
+              hls.destroy();
+              break;
+          }
+        }
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = currentUrl;
+      if (settings.autoPlay) {
+        video.play().catch(() => {});
+      }
+    } else {
+      video.src = currentUrl;
+    }
+
+    return () => {
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+    };
+  }, [currentSource.url, currentSource.format, activeServer]);
 
   // Restore saved progress or initial settings
   useEffect(() => {
@@ -147,14 +229,29 @@ export const AnimePlayer: React.FC<AnimePlayerProps> = ({
     setTimeout(() => setIntroToast(false), 2500);
   };
 
-  // Seamless Quality Switch (preserving currentTime & playback state)
+  // Seamless Quality Switch (with HLS adaptive levels support)
   const handleQualityChange = (quality: VideoQuality) => {
+    setSelectedQuality(quality);
+    setShowSettingsMenu(false);
+
+    if (hlsRef.current && hlsLevels.length > 0) {
+      if (quality === 'auto') {
+        hlsRef.current.currentLevel = -1;
+      } else {
+        const targetHeight = parseInt(quality.replace('p', ''), 10);
+        const levelIdx = hlsLevels.findIndex((l) => l.height === targetHeight);
+        if (levelIdx !== -1) {
+          hlsRef.current.currentLevel = levelIdx;
+        } else {
+          hlsRef.current.currentLevel = -1;
+        }
+      }
+      return;
+    }
+
     if (!videoRef.current || quality === selectedQuality) return;
     const prevTime = videoRef.current.currentTime;
     const wasPlaying = !videoRef.current.paused;
-
-    setSelectedQuality(quality);
-    setShowSettingsMenu(false);
 
     setTimeout(() => {
       if (videoRef.current) {
@@ -329,7 +426,6 @@ export const AnimePlayer: React.FC<AnimePlayerProps> = ({
       {activeServer !== 'embed' ? (
         <video
           ref={videoRef}
-          src={currentSource.url}
           className="w-full h-full object-contain cursor-pointer"
           onClick={togglePlay}
           onPlay={() => setIsPlaying(true)}
@@ -345,7 +441,19 @@ export const AnimePlayer: React.FC<AnimePlayerProps> = ({
           }}
           onEnded={handleVideoEnded}
           playsInline
-        />
+          crossOrigin="anonymous"
+        >
+          {episode.subtitles?.map((sub, idx) => (
+            <track
+              key={idx}
+              kind="subtitles"
+              src={sub.url}
+              srcLang={sub.lang.slice(0, 2).toLowerCase()}
+              label={sub.lang}
+              default={sub.default}
+            />
+          ))}
+        </video>
       ) : (
         /* Embed / Third Party Iframe Player */
         <iframe
@@ -656,6 +764,18 @@ export const AnimePlayer: React.FC<AnimePlayerProps> = ({
                 {activeMenuTab === 'main' && (
                   <>
                     <button
+                      onClick={() => setActiveMenuTab('server')}
+                      className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Server className="w-3.5 h-3.5 text-emerald-400" /> Server Stream
+                      </span>
+                      <span className="text-emerald-400 font-bold flex items-center gap-1">
+                        {activeServer === 'server1' ? 'Server 1 (HLS)' : activeServer === 'server2' ? 'Server 2 (CDN)' : 'Embed'} <ChevronRight className="w-3 h-3" />
+                      </span>
+                    </button>
+
+                    <button
                       onClick={() => setActiveMenuTab('quality')}
                       className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors"
                     >
@@ -682,6 +802,45 @@ export const AnimePlayer: React.FC<AnimePlayerProps> = ({
                   </>
                 )}
 
+                {/* Server Submenu */}
+                {activeMenuTab === 'server' && (
+                  <div>
+                    <div className="flex items-center justify-between px-2 py-1.5 border-b border-white/5 font-bold text-white mb-1">
+                      <span>Pilih Server Stream</span>
+                      <button
+                        onClick={() => setActiveMenuTab('main')}
+                        className="text-[10px] text-brand-cyan hover:underline"
+                      >
+                        Kembali
+                      </button>
+                    </div>
+                    {[
+                      { id: 'server1', name: 'Server 1: HLS Stream (HD)', desc: 'Adaptive HLS Master • 1080p/720p' },
+                      { id: 'server2', name: 'Server 2: CDN Stream', desc: 'Direct CDN Fast Stream' },
+                      { id: 'embed', name: 'Server 3: Embed Player', desc: 'Pemutar pihak ketiga (AniKoto)' }
+                    ].map((srv) => (
+                      <button
+                        key={srv.id}
+                        onClick={() => {
+                          setActiveServer(srv.id as any);
+                          setShowSettingsMenu(false);
+                        }}
+                        className={`w-full flex items-center justify-between p-2 rounded-lg text-left transition-colors ${
+                          activeServer === srv.id
+                            ? 'bg-emerald-500/20 text-emerald-400 font-bold'
+                            : 'hover:bg-white/5 text-slate-300'
+                        }`}
+                      >
+                        <div>
+                          <div className="text-xs font-semibold">{srv.name}</div>
+                          <div className="text-[10px] text-slate-400">{srv.desc}</div>
+                        </div>
+                        {activeServer === srv.id && <Check className="w-3.5 h-3.5 shrink-0" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 {/* Quality Submenu */}
                 {activeMenuTab === 'quality' && (
                   <div>
@@ -694,7 +853,7 @@ export const AnimePlayer: React.FC<AnimePlayerProps> = ({
                         Kembali
                       </button>
                     </div>
-                    {(['1080p', '720p', '480p', '360p'] as VideoQuality[]).map((q) => (
+                    {(['auto', '1080p', '720p', '480p', '360p'] as VideoQuality[]).map((q) => (
                       <button
                         key={q}
                         onClick={() => handleQualityChange(q)}
@@ -704,7 +863,7 @@ export const AnimePlayer: React.FC<AnimePlayerProps> = ({
                             : 'hover:bg-white/5 text-slate-300'
                         }`}
                       >
-                        <span>{q} {q === '1080p' ? '(FHD)' : q === '720p' ? '(HD)' : ''}</span>
+                        <span>{q === 'auto' ? 'Auto (Adaptif)' : `${q} ${q === '1080p' ? '(FHD)' : q === '720p' ? '(HD)' : ''}`}</span>
                         {selectedQuality === q && <Check className="w-3.5 h-3.5" />}
                       </button>
                     ))}

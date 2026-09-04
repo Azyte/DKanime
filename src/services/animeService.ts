@@ -1,4 +1,4 @@
-import type { Anime } from '../types/anime';
+import type { Anime, AnimeEpisode, SubtitleTrack, VideoSource } from '../types/anime';
 import { INITIAL_ANIMES, generateEpisodes } from './animeData';
 
 export interface AnimeFilterOptions {
@@ -11,9 +11,44 @@ export interface AnimeFilterOptions {
   sortBy?: 'popularity' | 'score' | 'title' | 'year' | 'latest';
 }
 
+export interface EpisodeStreamResult {
+  sources: VideoSource[];
+  embedUrl?: string;
+  subtitles?: SubtitleTrack[];
+  server?: string;
+  availableServers?: string[];
+  playbackMode?: 'hls' | 'mp4';
+}
+
+// Known mappings to AniList and MAL IDs for instant stream resolution
+const KNOWN_ANIME_IDS: Record<number, { anilistId: number; malId: number }> = {
+  1: { anilistId: 151807, malId: 52299 }, // Solo Leveling
+  2: { anilistId: 154587, malId: 52991 }, // Frieren: Beyond Journey's End
+  3: { anilistId: 113415, malId: 40748 }, // Jujutsu Kaisen
+  4: { anilistId: 16498, malId: 16498 },   // Attack on Titan
+  5: { anilistId: 101922, malId: 38000 }, // Demon Slayer
+  6: { anilistId: 21, malId: 21 },         // One Piece
+  7: { anilistId: 127230, malId: 44511 }, // Chainsaw Man
+  8: { anilistId: 150672, malId: 52034 }, // Oshi no Ko
+  9: { anilistId: 114446, malId: 41467 }, // Bleach: TYBW
+  10: { anilistId: 128893, malId: 46569 }, // Hell's Paradise
+  11: { anilistId: 140960, malId: 50273 }, // Spy x Family
+  12: { anilistId: 108465, malId: 39535 }, // Mushoku Tensei
+  13: { anilistId: 171018, malId: 57334 }, // Dan Da Dan
+  14: { anilistId: 153288, malId: 52588 }, // Kaiju No. 8
+  15: { anilistId: 163270, malId: 54900 }, // Wind Breaker
+  16: { anilistId: 21459, malId: 31964 },  // My Hero Academia
+  17: { anilistId: 97940, malId: 34572 },  // Black Clover
+  18: { anilistId: 11061, malId: 11061 },  // Hunter x Hunter
+  19: { anilistId: 1535, malId: 1535 },    // Death Note
+  20: { anilistId: 9253, malId: 9253 }     // Steins;Gate
+};
+
 class AnimeService {
   private animes: Anime[] = INITIAL_ANIMES;
   private jikanCache: Map<string, any> = new Map();
+  private streamCache: Map<string, EpisodeStreamResult> = new Map();
+  private searchCache: Map<string, Anime[]> = new Map();
 
   constructor() {
     // Load local storage custom animes if any
@@ -35,9 +70,24 @@ class AnimeService {
     return this.animes;
   }
 
-  // Get anime by ID
+  // Get anime by ID (from catalog, custom list, or live search cache)
   getById(id: number): Anime | undefined {
-    return this.animes.find((a) => a.id === id);
+    const found = this.animes.find((a) => a.id === id);
+    if (found) return found;
+
+    for (const list of this.searchCache.values()) {
+      const match = list.find((a) => a.id === id);
+      if (match) return match;
+    }
+
+    for (const list of this.jikanCache.values()) {
+      if (Array.isArray(list)) {
+        const match = list.find((a: Anime) => a.id === id);
+        if (match) return match;
+      }
+    }
+
+    return undefined;
   }
 
   // Filter & Search animes
@@ -193,6 +243,144 @@ class AnimeService {
     } catch {
       // On failure, filter local
       return this.filter({ query });
+    }
+  }
+
+  // Live Anime Search powered by AniVault (AniList / MAL)
+  async searchAnimeLive(query: string): Promise<Anime[]> {
+    if (!query || query.trim().length < 2) return [];
+    const cacheKey = `search_${query.toLowerCase().trim()}`;
+    if (this.searchCache.has(cacheKey)) {
+      return this.searchCache.get(cacheKey)!;
+    }
+
+    try {
+      const res = await fetch(`https://api.anivault.co/api/search?q=${encodeURIComponent(query.trim())}`);
+      if (!res.ok) throw new Error(`Search failed: ${res.status}`);
+      const json = await res.json();
+      if (!json.results || !Array.isArray(json.results) || json.results.length === 0) {
+        return this.searchJikanLive(query);
+      }
+
+      const results: Anime[] = json.results.map((item: any) => {
+        const epCount = item.episodes || 12;
+        const animeId = item.id || (item.malId ? item.malId + 100000 : Math.floor(Math.random() * 90000) + 10000);
+        return {
+          id: animeId,
+          anilistId: item.id,
+          malId: item.malId,
+          title: item.title,
+          romajiTitle: item.title,
+          synopsis: `Nonton anime ${item.title} sub Indo / English dengan resolusi HD 1080p, audio jernih, dan subtitle lengkap di DKanime.`,
+          posterImage: item.coverImage || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=85',
+          coverImage: item.coverImage || 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
+          score: 8.4,
+          scoredBy: 15000,
+          rank: 50,
+          popularity: 50,
+          status: item.status === 'RELEASING' ? 'Ongoing' : 'Completed',
+          episodesCount: epCount,
+          duration: '24 min',
+          year: new Date().getFullYear(),
+          genres: ['Action', 'Adventure', 'Animation'],
+          ratingBadge: '13+',
+          episodes: generateEpisodes(animeId, item.title, Math.min(epCount, 24))
+        };
+      });
+
+      this.searchCache.set(cacheKey, results);
+      return results;
+    } catch {
+      return this.searchJikanLive(query);
+    }
+  }
+
+  // Fetch real streaming video sources for any anime episode
+  async getEpisodeStream(anime: Anime, episodeNumber: number): Promise<EpisodeStreamResult | null> {
+    const cacheKey = `stream_${anime.id}_${episodeNumber}`;
+    if (this.streamCache.has(cacheKey)) {
+      return this.streamCache.get(cacheKey)!;
+    }
+
+    try {
+      let anilistId = anime.anilistId || KNOWN_ANIME_IDS[anime.id]?.anilistId;
+      let malId = anime.malId || KNOWN_ANIME_IDS[anime.id]?.malId;
+
+      // If IDs are missing, resolve them automatically via AniVault search
+      if (!anilistId && !malId) {
+        const cleanTitle = (anime.romajiTitle || anime.title).replace(/\([^)]*\)/g, '').trim();
+        const searchRes = await fetch(`https://api.anivault.co/api/search?q=${encodeURIComponent(cleanTitle)}`);
+        if (searchRes.ok) {
+          const searchJson = await searchRes.json();
+          if (searchJson.results && searchJson.results.length > 0) {
+            anilistId = searchJson.results[0].id;
+            malId = searchJson.results[0].malId;
+          }
+        }
+      }
+
+      if (!anilistId && !malId) {
+        return null;
+      }
+
+      const queryParam = anilistId ? `anilistId=${anilistId}` : `malId=${malId}`;
+      const url = `https://api.anivault.co/api/watch?${queryParam}&ep=${episodeNumber}&type=sub`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Stream fetch error: ${res.status}`);
+
+      const data = await res.json();
+      const sources: VideoSource[] = [];
+
+      // 1. Primary HLS Proxy Stream (CORS-enabled, Master 1080p/720p/480p Adaptive)
+      if (data.hlsProxyUrl) {
+        sources.push({
+          quality: '1080p',
+          url: data.hlsProxyUrl,
+          format: 'hls',
+          label: `${data.server || 'Server HLS (HD)'} - 1080p Master`
+        });
+      }
+
+      // 2. Direct m3u8 CDN Stream
+      if (data.m3u8 && data.m3u8 !== data.hlsProxyUrl) {
+        sources.push({
+          quality: '720p',
+          url: data.m3u8,
+          format: 'hls',
+          label: 'Direct CDN Stream (Fast)'
+        });
+      }
+
+      // 3. Fallback direct MP4 proxy if provided
+      if (data.proxyVideoUrl) {
+        sources.push({
+          quality: '720p',
+          url: data.proxyVideoUrl,
+          format: 'mp4',
+          label: 'Direct MP4 Stream'
+        });
+      }
+
+      const result: EpisodeStreamResult = {
+        sources,
+        embedUrl: data.embedUrl,
+        subtitles: Array.isArray(data.subtitles)
+          ? data.subtitles.map((s: any) => ({
+              url: s.url,
+              lang: s.lang,
+              default: s.default || s.lang?.toLowerCase().includes('english')
+            }))
+          : [],
+        server: data.server,
+        availableServers: data.availableServers,
+        playbackMode: data.playbackMode
+      };
+
+      this.streamCache.set(cacheKey, result);
+      return result;
+    } catch (err) {
+      console.warn('Live anime stream fetch warning:', err);
+      return null;
     }
   }
 }
