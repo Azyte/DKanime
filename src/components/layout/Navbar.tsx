@@ -11,6 +11,7 @@ import {
   X,
   Play
 } from 'lucide-react';
+import { Logo } from './Logo';
 import { useWatch } from '../../context/WatchContext';
 import { useSettings } from '../../context/SettingsContext';
 
@@ -57,28 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
         <div className="flex items-center gap-8">
-          <Link
-            to="/"
-            className="flex items-center gap-2.5 group focus:outline-none"
-            aria-label="DKanime Home"
-          >
-            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-cyan via-brand-purple to-brand-pink p-[1.5px] shadow-lg shadow-brand-cyan/20 group-hover:shadow-brand-cyan/40 transition-all duration-300 group-hover:scale-105 active:scale-95">
-              <div className="w-full h-full bg-dark-900 rounded-[10px] flex items-center justify-center">
-                <Play className="w-5 h-5 text-brand-cyan fill-brand-cyan transition-transform group-hover:scale-110 ml-0.5" />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-white flex items-center gap-1">
-                DK<span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-purple">anime</span>
-                <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30 ml-1 hidden sm:inline-block">
-                  v2.0
-                </span>
-              </span>
-              <span className="text-[10px] tracking-widest text-slate-400 font-medium -mt-1 uppercase">
-                Ultra HD Streaming
-              </span>
-            </div>
-          </Link>
+          <Logo />
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-1">

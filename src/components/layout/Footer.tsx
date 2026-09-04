@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Heart, Shield, Film, Sparkles, ExternalLink } from 'lucide-react';
+import { Heart, Shield, Film, Sparkles, ExternalLink } from 'lucide-react';
+import { Logo } from './Logo';
 
 export const Footer: React.FC = () => {
   return (
@@ -9,14 +10,7 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           {/* Col 1: Brand & Disclaimer */}
           <div className="md:col-span-2 space-y-4">
-            <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-cyan to-brand-purple flex items-center justify-center text-white shadow-md shadow-brand-cyan/20">
-                <Play className="w-4 h-4 fill-white ml-0.5" />
-              </div>
-              <span className="text-lg font-black tracking-tight text-white">
-                DK<span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-purple">anime</span>
-              </span>
-            </Link>
+            <Logo size="sm" showBadge={false} />
             <p className="text-xs text-slate-400 leading-relaxed max-w-md">
               DKanime adalah platform streaming anime modern dengan kualitas tinggi (1080p, 720p, 480p, 360p).
               Didesain khusus dengan interface elegan, bebas dari lag, dan responsif di berbagai perangkat (Desktop, Tablet, iOS, Android).

@@ -22,26 +22,102 @@ export interface EpisodeStreamResult {
 
 // Known mappings to AniList and MAL IDs for instant stream resolution
 const KNOWN_ANIME_IDS: Record<number, { anilistId: number; malId: number }> = {
-  1: { anilistId: 151807, malId: 52299 }, // Solo Leveling
-  2: { anilistId: 154587, malId: 52991 }, // Frieren: Beyond Journey's End
-  3: { anilistId: 113415, malId: 40748 }, // Jujutsu Kaisen
-  4: { anilistId: 16498, malId: 16498 },   // Attack on Titan
-  5: { anilistId: 101922, malId: 38000 }, // Demon Slayer
-  6: { anilistId: 21, malId: 21 },         // One Piece
-  7: { anilistId: 127230, malId: 44511 }, // Chainsaw Man
-  8: { anilistId: 150672, malId: 52034 }, // Oshi no Ko
-  9: { anilistId: 114446, malId: 41467 }, // Bleach: TYBW
-  10: { anilistId: 128893, malId: 46569 }, // Hell's Paradise
-  11: { anilistId: 140960, malId: 50273 }, // Spy x Family
-  12: { anilistId: 108465, malId: 39535 }, // Mushoku Tensei
-  13: { anilistId: 171018, malId: 57334 }, // Dan Da Dan
-  14: { anilistId: 153288, malId: 52588 }, // Kaiju No. 8
-  15: { anilistId: 163270, malId: 54900 }, // Wind Breaker
-  16: { anilistId: 21459, malId: 31964 },  // My Hero Academia
-  17: { anilistId: 97940, malId: 34572 },  // Black Clover
-  18: { anilistId: 11061, malId: 11061 },  // Hunter x Hunter
-  19: { anilistId: 1535, malId: 1535 },    // Death Note
-  20: { anilistId: 9253, malId: 9253 }     // Steins;Gate
+  "1": {
+    "anilistId": 151807,
+    "malId": 52299
+  },
+  "2": {
+    "anilistId": 154587,
+    "malId": 52991
+  },
+  "3": {
+    "anilistId": 145064,
+    "malId": 51009
+  },
+  "4": {
+    "anilistId": 16498,
+    "malId": 16498
+  },
+  "5": {
+    "anilistId": 101922,
+    "malId": 38000
+  },
+  "6": {
+    "anilistId": 21,
+    "malId": 21
+  },
+  "7": {
+    "anilistId": 127230,
+    "malId": 44511
+  },
+  "8": {
+    "anilistId": 150672,
+    "malId": 52034
+  },
+  "9": {
+    "anilistId": 116674,
+    "malId": 41467
+  },
+  "10": {
+    "anilistId": 130003,
+    "malId": 47917
+  },
+  "11": {
+    "anilistId": 120377,
+    "malId": 42310
+  },
+  "12": {
+    "anilistId": 171018,
+    "malId": 57334
+  },
+  "13": {
+    "anilistId": 1535,
+    "malId": 1535
+  },
+  "14": {
+    "anilistId": 5114,
+    "malId": 5114
+  },
+  "15": {
+    "anilistId": 11061,
+    "malId": 11061
+  },
+  "16": {
+    "anilistId": 125367,
+    "malId": 43608
+  },
+  "17": {
+    "anilistId": 146065,
+    "malId": 51179
+  },
+  "18": {
+    "anilistId": 9253,
+    "malId": 9253
+  },
+  "19": {
+    "anilistId": 158927,
+    "malId": 53887
+  },
+  "20": {
+    "anilistId": 136430,
+    "malId": 49387
+  },
+  "21": {
+    "anilistId": 21827,
+    "malId": 33352
+  },
+  "22": {
+    "anilistId": 163270,
+    "malId": 54900
+  },
+  "23": {
+    "anilistId": 392,
+    "malId": 392
+  },
+  "24": {
+    "anilistId": 159831,
+    "malId": 54112
+  }
 };
 
 class AnimeService {

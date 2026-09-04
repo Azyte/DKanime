@@ -1,7 +1,12 @@
 import type { Anime, AnimeEpisode, VideoSource } from '../types/anime';
 
 // Helper to generate mock episodes with multi-quality streams
-export const generateEpisodes = (animeId: number, _animeTitle: string, count: number): AnimeEpisode[] => {
+export const generateEpisodes = (
+  animeId: number,
+  _animeTitle: string,
+  count: number,
+  fallbackThumbnail?: string
+): AnimeEpisode[] => {
   const episodes: AnimeEpisode[] = [];
   const titles = [
     'Kebangkitan Sang Pemburu Terkuat',
@@ -66,10 +71,10 @@ export const generateEpisodes = (animeId: number, _animeTitle: string, count: nu
       number: i,
       title: `Episode ${i}: ${epTitle}`,
       duration: '24:15',
-      thumbnail: `https://images.unsplash.com/photo-${1578632767115 + (i * 37) % 500}?auto=format&fit=crop&w=600&q=80`,
+      thumbnail: fallbackThumbnail || 'https://images.unsplash.com/photo-1578632767115?auto=format&fit=crop&w=600&q=80',
       synopsis: `Di episode ${i}, tensi semakin memuncak saat pertempuran strategis dimulai. Strategi tak terduga mengubah jalannya konflik.`,
       sources,
-      embedUrl: `https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0`
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0'
     });
   }
 
@@ -83,9 +88,9 @@ export const INITIAL_ANIMES: Anime[] = [
     japaneseTitle: '俺だけレベルアップな件',
     romajiTitle: 'Ore dake Level Up na Ken',
     synopsis: 'Lebih dari satu dekade telah berlalu sejak kemunculan "gates" misterius yang menghubungkan dunia manusia ke dimensi sarang monster. Sung Jin-woo, pemburu terlemah berperingkat E, secara ajaib terpilih oleh sistem "Quest" unik yang memungkinkan dirinya meningkatkan kekuatannya tanpa batas.',
-    posterImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
-    score: 9.15,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx151807-it355ZgzquUd.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/151807-37yfQA3ym8PA.jpg',
+    score: 8,
     scoredBy: 842100,
     rank: 1,
     popularity: 1,
@@ -98,7 +103,7 @@ export const INITIAL_ANIMES: Anime[] = [
     studios: ['A-1 Pictures'],
     trailerUrl: 'https://www.youtube.com/watch?v=91t8n1R',
     ratingBadge: '17+',
-    episodes: generateEpisodes(1, 'Solo Leveling', 12)
+    episodes: generateEpisodes(1, 'Solo Leveling', 12, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/151807-37yfQA3ym8PA.jpg')
   },
   {
     id: 2,
@@ -106,9 +111,9 @@ export const INITIAL_ANIMES: Anime[] = [
     japaneseTitle: '葬送のフリーレン',
     romajiTitle: 'Sousou no Frieren',
     synopsis: 'Kelompok pahlawan telah mengalahkan Raja Iblis dan membawa perdamaian dunia. Namun bagi Frieren, seorang penyihir elf yang berumur ribuan tahun, petualangan 10 tahun itu hanyalah sekejap mata. Setelah teman-temannya menua dan meninggal, Frieren memulai perjalanan baru untuk memahami esensi emosi manusia.',
-    posterImage: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85',
-    score: 9.38,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154587-qQTzQnEJJ3oB.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/154587-ivXNJ23SM1xB.jpg',
+    score: 9.1,
     scoredBy: 620000,
     rank: 2,
     popularity: 2,
@@ -120,17 +125,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Adventure', 'Drama', 'Fantasy', 'Slice of Life'],
     studios: ['Madhouse'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(2, 'Sousou no Frieren', 28)
+    episodes: generateEpisodes(2, 'Sousou no Frieren', 28, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/154587-ivXNJ23SM1xB.jpg')
   },
   {
     id: 3,
     title: 'Jujutsu Kaisen Season 2 (Shibuya Incident)',
-    japaneseTitle: '呪術廻戦',
-    romajiTitle: 'Jujutsu Kaisen',
+    japaneseTitle: '呪術廻戦 第2期',
+    romajiTitle: 'Jujutsu Kaisen 2nd Season',
     synopsis: '31 Oktober, stasiun Shibuya yang ramai tiba-tiba terkurung oleh tirai kegelapan misterius. Puluhan ribu warga sipil disandera demi memancing penyihir terkuat di dunia, Satoru Gojo. Sebuah pertempuran kolosal yang menentukan nasib umat manusia meletus.',
-    posterImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1600&q=85',
-    score: 8.92,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx145064-hSNRJM03pvv1.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/145064-esDtAY2He7sk.jpg',
+    score: 8.6,
     scoredBy: 910400,
     rank: 4,
     popularity: 3,
@@ -142,7 +147,7 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Fantasy', 'Shounen', 'Supernatural'],
     studios: ['MAPPA'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(3, 'Jujutsu Kaisen Season 2', 23)
+    episodes: generateEpisodes(3, 'Jujutsu Kaisen Season 2', 23, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/145064-esDtAY2He7sk.jpg')
   },
   {
     id: 4,
@@ -150,9 +155,9 @@ export const INITIAL_ANIMES: Anime[] = [
     japaneseTitle: '進撃の巨人',
     romajiTitle: 'Shingeki no Kyojin',
     synopsis: 'Eren Yeager melancarkan The Rumbling untuk melenyapkan semua kehidupan di luar Pulau Paradis demi melindungi tanah kelahirannya. Teman-temannya di Survey Corps bersatu dengan musuh lama untuk menghentikan bencana kepunahan global dalam duel terakhir yang epik.',
-    posterImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85',
-    score: 9.06,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-buvcRTBx4NSm.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498-8jpFCOcDmneX.jpg',
+    score: 8.5,
     scoredBy: 1250000,
     rank: 3,
     popularity: 4,
@@ -164,17 +169,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Drama', 'Mystery', 'Suspense'],
     studios: ['MAPPA'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(4, 'Attack on Titan', 28)
+    episodes: generateEpisodes(4, 'Attack on Titan', 28, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/16498-8jpFCOcDmneX.jpg')
   },
   {
     id: 5,
     title: 'Demon Slayer: Hashira Training Arc',
-    japaneseTitle: '鬼滅の刃 柱稽古編',
-    romajiTitle: 'Kimetsu no Yaiba: Hashira Geiko-hen',
+    japaneseTitle: '鬼滅の刃',
+    romajiTitle: 'Kimetsu no Yaiba',
     synopsis: 'Menjelang pertempuran pamungkas melawan Kibutsuji Muzan di Kastil Tak Berhingga, seluruh anggota Korps Pembasmi Iblis menjalani pelatihan neraka bersama para Hashira terpilih untuk membangkitkan tanda iblis.',
-    posterImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1600&q=85',
-    score: 8.78,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-WBsBl0ClmgYL.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/101922-33MtJGsUSxga.jpg',
+    score: 8.3,
     scoredBy: 530000,
     rank: 8,
     popularity: 5,
@@ -186,17 +191,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Fantasy', 'Historical', 'Shounen'],
     studios: ['ufotable'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(5, 'Demon Slayer', 8)
+    episodes: generateEpisodes(5, 'Demon Slayer', 8, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/101922-33MtJGsUSxga.jpg')
   },
   {
     id: 6,
     title: 'One Piece (Egghead Arc)',
-    japaneseTitle: 'ワンピース',
-    romajiTitle: 'One Piece',
+    japaneseTitle: 'ONE PIECE',
+    romajiTitle: 'ONE PIECE',
     synopsis: 'Monkey D. Luffy dan Topi Jerami mendarat di Egghead, pulau sains masa depan milik ilmuwan jenius Dr. Vegapunk. Namun rahasia terbesar Pemerintah Dunia dan Abad Kekosongan mulai terkuak hingga armada Angkatan Laut mengepung pulau.',
-    posterImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
-    score: 8.95,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-ELSYx3yMPcKM.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/21-wf37VakJmZqs.jpg',
+    score: 8.7,
     scoredBy: 1540000,
     rank: 5,
     popularity: 6,
@@ -208,7 +213,7 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Adventure', 'Comedy', 'Fantasy'],
     studios: ['Toei Animation'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(6, 'One Piece', 24)
+    episodes: generateEpisodes(6, 'One Piece', 24, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/21-wf37VakJmZqs.jpg')
   },
   {
     id: 7,
@@ -216,9 +221,9 @@ export const INITIAL_ANIMES: Anime[] = [
     japaneseTitle: 'チェンソーマン',
     romajiTitle: 'Chainsaw Man',
     synopsis: 'Denji hidup dalam kemiskinan ekstrem dan bekerja sebagai pemburu iblis untuk melunasi hutang ayahnya. Setelah dikhianati dan dibunuh, iblis gergaji kesayangannya, Pochita, menyatu dengan jantungnya dan melahirkan manusia gergaji.',
-    posterImage: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1600&q=85',
-    score: 8.52,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx127230-DdP4vAdssLoz.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/127230-o8IRwCGVr9KW.jpg',
+    score: 8.3,
     scoredBy: 780000,
     rank: 12,
     popularity: 7,
@@ -230,17 +235,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Supernatural', 'Gore', 'Shounen'],
     studios: ['MAPPA'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(7, 'Chainsaw Man', 12)
+    episodes: generateEpisodes(7, 'Chainsaw Man', 12, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/127230-o8IRwCGVr9KW.jpg')
   },
   {
     id: 8,
     title: 'Oshi no Ko Season 2',
-    japaneseTitle: '【推しの子】第2期',
-    romajiTitle: 'Oshi no Ko 2nd Season',
+    japaneseTitle: '【推しの子】',
+    romajiTitle: '[Oshi no Ko]',
     synopsis: 'Aqua Hoshino menyelami dunia teater drama 2.5D untuk mengungkap dalang di balik kematian idol legendaris Ai Hoshino. Di atas panggung, intrik kepalsuan dan emosi mendalam saling bertubrukan.',
-    posterImage: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
-    score: 8.68,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx150672-WqmmwZ4nMzAy.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/150672-ISwoA0eS722H.jpg',
+    score: 8.4,
     scoredBy: 410000,
     rank: 10,
     popularity: 8,
@@ -252,17 +257,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Drama', 'Mystery', 'Psychological'],
     studios: ['Doga Kobo'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(8, 'Oshi no Ko', 13)
+    episodes: generateEpisodes(8, 'Oshi no Ko', 13, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/150672-ISwoA0eS722H.jpg')
   },
   {
     id: 9,
     title: 'Bleach: Thousand-Year Blood War',
     japaneseTitle: 'BLEACH 千年血戦篇',
-    romajiTitle: 'Bleach: Sennen Kessen-hen',
+    romajiTitle: 'BLEACH: Sennen Kessen-hen',
     synopsis: 'Perang suci antara Shinigami dan Quincy kembali pecah setelah ribuan tahun tertidur. Yhwach memimpin pasukan Sternritter menyerbu Soul Society dengan kekuatan yang tak terbayangkan.',
-    posterImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1600&q=85',
-    score: 9.02,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx116674-p3zK4PUX2Aag.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/116674-l2YlIyJzvGSV.jpg',
+    score: 8.8,
     scoredBy: 490000,
     rank: 6,
     popularity: 9,
@@ -274,7 +279,7 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Adventure', 'Fantasy', 'Shounen'],
     studios: ['Pierrot'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(9, 'Bleach: TYBW', 26)
+    episodes: generateEpisodes(9, 'Bleach: TYBW', 26, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/116674-l2YlIyJzvGSV.jpg')
   },
   {
     id: 10,
@@ -282,9 +287,9 @@ export const INITIAL_ANIMES: Anime[] = [
     japaneseTitle: 'ぼっち・ざ・ろっく！',
     romajiTitle: 'Bocchi the Rock!',
     synopsis: 'Hitori Gotoh adalah gadis introver pemalu yang bermimpi memiliki band rock. Tak disangka, pertemuannya dengan Nijika membawanya bergabung dengan Kessoku Band dan mengubah hidupnya yang sunyi menjadi penuh nada.',
-    posterImage: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85',
-    score: 8.81,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx130003-HTDmeL4RGeJ4.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/130003-5F90a7BtsPQN.jpg',
+    score: 8.7,
     scoredBy: 390000,
     rank: 9,
     popularity: 10,
@@ -296,7 +301,7 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Comedy', 'Music', 'Slice of Life'],
     studios: ['CloverWorks'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(10, 'Bocchi the Rock!', 12)
+    episodes: generateEpisodes(10, 'Bocchi the Rock!', 12, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/130003-5F90a7BtsPQN.jpg')
   },
   {
     id: 11,
@@ -304,9 +309,9 @@ export const INITIAL_ANIMES: Anime[] = [
     japaneseTitle: 'サイバーパンク エッジランナーズ',
     romajiTitle: 'Cyberpunk: Edgerunners',
     synopsis: 'Di kota futuristik Night City yang dipenuhi korupsi dan modifikasi cybernetic, seorang anak jalanan berbakat memilih jalan sebagai Edgerunner, tentara bayaran di luar hukum yang siap bertaruh nyawa.',
-    posterImage: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1600&q=85',
-    score: 8.62,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx120377-ayZPoxiWt4Li.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/120377-c15oLS8CA31s.jpg',
+    score: 8.5,
     scoredBy: 680000,
     rank: 14,
     popularity: 11,
@@ -318,7 +323,7 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Sci-Fi', 'Gore', 'Psychological'],
     studios: ['Trigger'],
     ratingBadge: '18+',
-    episodes: generateEpisodes(11, 'Cyberpunk: Edgerunners', 10)
+    episodes: generateEpisodes(11, 'Cyberpunk: Edgerunners', 10, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/120377-c15oLS8CA31s.jpg')
   },
   {
     id: 12,
@@ -326,9 +331,9 @@ export const INITIAL_ANIMES: Anime[] = [
     japaneseTitle: 'ダンダダン',
     romajiTitle: 'Dandadan',
     synopsis: 'Momo Ayase yang percaya pada hantu tapi tidak pada alien bertemu dengan Okarun yang percaya pada alien tapi tidak pada hantu. Taruhan konyol mereka menyeret keduanya ke dalam pusaran fenomena paranormal yang gila dan seru.',
-    posterImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
-    score: 8.74,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx171018-60q1B6GK2Ghb.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/171018-SpwPNAduszXl.jpg',
+    score: 8.3,
     scoredBy: 320000,
     rank: 11,
     popularity: 12,
@@ -340,17 +345,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Comedy', 'Supernatural', 'Sci-Fi'],
     studios: ['Science SARU'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(12, 'Dandadan', 12)
+    episodes: generateEpisodes(12, 'Dandadan', 12, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/171018-SpwPNAduszXl.jpg')
   },
   {
     id: 13,
     title: 'Death Note',
-    japaneseTitle: 'デスノート',
-    romajiTitle: 'Death Note',
+    japaneseTitle: 'DEATH NOTE',
+    romajiTitle: 'DEATH NOTE',
     synopsis: 'Light Yagami, siswa jenius di Jepang, menemukan buku catatan supranatural milik Shinigami. Setiap orang yang namanya tertulis di buku tersebut akan mati. Perang pikiran antara Light dan detektif jenius L pun dimulai.',
-    posterImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85',
-    score: 8.62,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-kUgkcrfOrkUM.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg',
+    score: 8.4,
     scoredBy: 2800000,
     rank: 15,
     popularity: 13,
@@ -362,17 +367,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Mystery', 'Psychological', 'Supernatural', 'Suspense'],
     studios: ['Madhouse'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(13, 'Death Note', 37)
+    episodes: generateEpisodes(13, 'Death Note', 37, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/1535.jpg')
   },
   {
     id: 14,
     title: 'Fullmetal Alchemist: Brotherhood',
     japaneseTitle: '鋼の錬金術師 FULLMETAL ALCHEMIST',
-    romajiTitle: 'Hagane no Renkinjutsushi',
+    romajiTitle: 'Hagane no Renkinjutsushi: FULLMETAL ALCHEMIST',
     synopsis: 'Dua bersaudara Edward dan Alphonse Elric melanggar tabu terbesar alkimia untuk menghidupkan kembali ibu mereka. Demi mengembalikan tubuh mereka yang hilang, mereka mengembara mencari Batu Bertuah legendaris.',
-    posterImage: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1600&q=85',
-    score: 9.10,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx5114-nSWCgQlmOMtj.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/5114-q0V5URebphSG.jpg',
+    score: 9,
     scoredBy: 2200000,
     rank: 2,
     popularity: 14,
@@ -384,17 +389,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Adventure', 'Drama', 'Fantasy'],
     studios: ['Bones'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(14, 'Fullmetal Alchemist: Brotherhood', 64)
+    episodes: generateEpisodes(14, 'Fullmetal Alchemist: Brotherhood', 64, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/5114-q0V5URebphSG.jpg')
   },
   {
     id: 15,
     title: 'Hunter x Hunter (2011)',
-    japaneseTitle: 'ハンター×ハンター',
-    romajiTitle: 'Hunter x Hunter',
+    japaneseTitle: 'HUNTER×HUNTER (2011)',
+    romajiTitle: 'HUNTER×HUNTER (2011)',
     synopsis: 'Gon Freecss bercita-cita menjadi Hunter profesional untuk menemukan ayahnya yang seorang Hunter legendaris. Bersama Killua, Kurapika, dan Leorio, ia menghadapi ujian mematikan dan dunia Nen yang misterius.',
-    posterImage: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
-    score: 9.04,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11061-y5gsT1hoHuHw.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/11061-8WkkTZ6duKpq.jpg',
+    score: 8.9,
     scoredBy: 1800000,
     rank: 7,
     popularity: 15,
@@ -406,17 +411,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Adventure', 'Fantasy', 'Shounen'],
     studios: ['Madhouse'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(15, 'Hunter x Hunter', 24)
+    episodes: generateEpisodes(15, 'Hunter x Hunter', 24, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/11061-8WkkTZ6duKpq.jpg')
   },
   {
     id: 16,
     title: 'Kaguya-sama: Love Is War - Ultra Romantic',
-    japaneseTitle: 'かぐや様は告らせたい',
-    romajiTitle: 'Kaguya-sama wa Kokurasetai',
+    japaneseTitle: 'かぐや様は告らせたい-ウルトラロマンティック-',
+    romajiTitle: 'Kaguya-sama wa Kokurasetai: Ultra Romantic',
     synopsis: 'Miyuki Shirogane dan Kaguya Shinomiya adalah dua siswa paling elit di Akademi Shuchiin. Saling menyukai namun terlalu gengsi untuk mengaku, mereka menganggap cinta sebagai perang: siapa yang menyatakan cinta duluan, dialah yang kalah!',
-    posterImage: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85',
-    score: 8.98,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx125367-1yuq9NFcQuLI.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/125367-hGPJLSNfprO3.jpg',
+    score: 8.9,
     scoredBy: 520000,
     rank: 6,
     popularity: 16,
@@ -428,17 +433,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Comedy', 'Romance', 'Psychological', 'School'],
     studios: ['A-1 Pictures'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(16, 'Kaguya-sama', 13)
+    episodes: generateEpisodes(16, 'Kaguya-sama', 13, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/125367-hGPJLSNfprO3.jpg')
   },
   {
     id: 17,
     title: 'Mushoku Tensei: Jobless Reincarnation Season 2',
-    japaneseTitle: '無職転生 ～異世界行ったら本気だす～',
-    romajiTitle: 'Mushoku Tensei: Isekai Ittara Honki Dasu',
+    japaneseTitle: '無職転生Ⅱ ～異世界行ったら本気だす～',
+    romajiTitle: 'Mushoku Tensei II: Isekai Ittara Honki Dasu',
     synopsis: 'Seorang pria pengangguran berusia 34 tahun bereinkarnasi sebagai bayi bernama Rudeus Greyrat di dunia pedang dan sihir. Berbekal kenangan kehidupan masa lalunya, ia bertekad menjalani hidup barunya dengan sungguh-sungguh tanpa penyesalan.',
-    posterImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
-    score: 8.71,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx146065-IjirxRK26O03.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/146065-33RDijfuxLLk.jpg',
+    score: 8.1,
     scoredBy: 390000,
     rank: 13,
     popularity: 17,
@@ -450,7 +455,7 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Adventure', 'Drama', 'Fantasy', 'Isekai'],
     studios: ['Studio Bind'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(17, 'Mushoku Tensei', 24)
+    episodes: generateEpisodes(17, 'Mushoku Tensei', 24, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/146065-33RDijfuxLLk.jpg')
   },
   {
     id: 18,
@@ -458,9 +463,9 @@ export const INITIAL_ANIMES: Anime[] = [
     japaneseTitle: 'シュタインズ・ゲート',
     romajiTitle: 'Steins;Gate',
     synopsis: 'Rintaro Okabe, ilmuwan gila eksentrik, tanpa sengaja menemukan cara mengirim pesan teks ke masa lalu menggunakan oven microwave yang dimodifikasi. Eksperimen ini memicu rangkaian manipulasi garis waktu yang membawa konsekuensi maut.',
-    posterImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1600&q=85',
-    score: 9.07,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx9253-tIUXF2gfU8Sg.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/n9253-JIhmKgBKsWUN.jpg',
+    score: 8.9,
     scoredBy: 1400000,
     rank: 3,
     popularity: 18,
@@ -472,17 +477,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Drama', 'Sci-Fi', 'Suspense', 'Psychological'],
     studios: ['White Fox'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(18, 'Steins;Gate', 24)
+    episodes: generateEpisodes(18, 'Steins;Gate', 24, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/n9253-JIhmKgBKsWUN.jpg')
   },
   {
     id: 19,
     title: 'Spy x Family Season 2',
-    japaneseTitle: 'SPY×FAMILY',
-    romajiTitle: 'Spy x Family',
+    japaneseTitle: 'SPY×FAMILY Season 2',
+    romajiTitle: 'SPY×FAMILY Season 2',
     synopsis: 'Mata-mata handal Twilight harus membangun keluarga samaran demi misi perdamaian dunia. Tanpa ia ketahui, istri yang dinikahinya adalah pembunuh bayaran ulung, dan putri angkatnya adalah gadis telepati yang bisa membaca pikiran.',
-    posterImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85',
-    score: 8.24,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b158927-lfO85WVguYgc.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/158927-zXtbXUO5iKzX.jpg',
+    score: 8,
     scoredBy: 590000,
     rank: 22,
     popularity: 19,
@@ -494,17 +499,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Comedy', 'Slice of Life'],
     studios: ['WIT Studio', 'CloverWorks'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(19, 'Spy x Family', 12)
+    episodes: generateEpisodes(19, 'Spy x Family', 12, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/158927-zXtbXUO5iKzX.jpg')
   },
   {
     id: 20,
     title: 'Vinland Saga Season 2',
-    japaneseTitle: 'ヴィンランド・サガ',
-    romajiTitle: 'Vinland Saga',
+    japaneseTitle: 'ヴィンランド・サガ SEASON2',
+    romajiTitle: 'VINLAND SAGA SEASON 2',
     synopsis: 'Thorfinn yang kehilangan tujuan hidup setelah kematian Askeladd kini bekerja sebagai budak di tanah pertanian Ketil. Di tengah kehampaan jiwanya, ia memulai perjalanan filosofis untuk memahami arti sejati dari seorang pejuang tanpa pedang.',
-    posterImage: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1600&q=85',
-    score: 8.84,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx136430-gsBsJjA7hGh9.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/136430-ktoFZnyubhHg.jpg',
+    score: 8.8,
     scoredBy: 460000,
     rank: 8,
     popularity: 20,
@@ -516,7 +521,7 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Adventure', 'Drama', 'Historical'],
     studios: ['MAPPA'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(20, 'Vinland Saga', 24)
+    episodes: generateEpisodes(20, 'Vinland Saga', 24, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/136430-ktoFZnyubhHg.jpg')
   },
   {
     id: 21,
@@ -524,9 +529,9 @@ export const INITIAL_ANIMES: Anime[] = [
     japaneseTitle: 'ヴァイオレット・エヴァーガーデン',
     romajiTitle: 'Violet Evergarden',
     synopsis: 'Mantan tentara anak perempuan yang hanya mengenal medan perang kini bekerja sebagai Auto Memory Doll yang mengetik surat emosional bagi orang lain, demi mengungkap arti kata terakhir dari Mayor Gilbert: "Aku mencintaimu".',
-    posterImage: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
-    score: 8.67,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21827-ubzq619ZA2E9.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/21827-ROucgYiiiSpR.jpg',
+    score: 8.5,
     scoredBy: 980000,
     rank: 16,
     popularity: 21,
@@ -538,17 +543,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Drama', 'Fantasy', 'Slice of Life'],
     studios: ['Kyoto Animation'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(21, 'Violet Evergarden', 13)
+    episodes: generateEpisodes(21, 'Violet Evergarden', 13, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/21827-ROucgYiiiSpR.jpg')
   },
   {
     id: 22,
     title: 'Wind Breaker',
-    japaneseTitle: 'ウィンドブレイカー',
-    romajiTitle: 'Wind Breaker',
+    japaneseTitle: 'WIND BREAKER',
+    romajiTitle: 'WIND BREAKER',
     synopsis: 'Haruka Sakura datang ke SMA Furin dengan satu tujuan: mengalahkan semua orang dan menjadi yang terkuat di puncak sekolah preman. Namun ia terkejut saat mengetahui murid Furin justru menjadi pelindung kota yang dicintai warga.',
-    posterImage: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=85',
-    score: 7.92,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx163270-wboZJp0ybwVK.jpg',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/163270-fcjrqp3iKWdb.jpg',
+    score: 7.7,
     scoredBy: 180000,
     rank: 45,
     popularity: 22,
@@ -560,17 +565,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Delinquents', 'School'],
     studios: ['CloverWorks'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(22, 'Wind Breaker', 12)
+    episodes: generateEpisodes(22, 'Wind Breaker', 12, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/163270-fcjrqp3iKWdb.jpg')
   },
   {
     id: 23,
     title: 'Yu Yu Hakusho',
     japaneseTitle: '幽☆遊☆白書',
-    romajiTitle: 'Yu Yu Hakusho',
+    romajiTitle: 'Yuu☆Yuu☆Hakusho',
     synopsis: 'Yusuke Urameshi, remaja pembuat onar berusia 14 tahun, tewas setelah menyelamatkan seorang anak kecil dari tabrakan mobil. Tindakan altruistiknya mengejutkan Dunia Roh, dan ia diberi kesempatan hidup kembali sebagai Detektif Roh.',
-    posterImage: 'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1600&q=85',
-    score: 8.44,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx392-z90299zIvYmx.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/392-nbB6cBnhHOFb.jpg',
+    score: 8.3,
     scoredBy: 580000,
     rank: 25,
     popularity: 23,
@@ -582,17 +587,17 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Comedy', 'Supernatural', 'Martial Arts'],
     studios: ['Pierrot'],
     ratingBadge: '13+',
-    episodes: generateEpisodes(23, 'Yu Yu Hakusho', 24)
+    episodes: generateEpisodes(23, 'Yu Yu Hakusho', 24, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/392-nbB6cBnhHOFb.jpg')
   },
   {
     id: 24,
     title: 'Zom 100: Bucket List of the Dead',
     japaneseTitle: 'ゾン100～ゾンビになるまでにしたい100のこと～',
-    romajiTitle: 'Zom 100: Zombie ni Naru made ni Shitai 100 no Koto',
+    romajiTitle: 'Zom 100: Zombie ni Naru Made ni Shitai 100 no Koto',
     synopsis: 'Akira Tendo menderita selama 3 tahun bekerja di perusahaan eksploitatif yang menghancurkan jiwanya. Ketika wabah zombie mendadak menghancurkan Tokyo, alih-alih panik, Akira justru bersorak gembira karena tidak perlu lagi masuk kantor!',
-    posterImage: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=85',
-    coverImage: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1600&q=85',
-    score: 7.85,
+    posterImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx159831-cJUNqCqzuApc.png',
+    coverImage: 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/159831-FWfdyqpxhLli.jpg',
+    score: 7.6,
     scoredBy: 240000,
     rank: 52,
     popularity: 24,
@@ -604,7 +609,7 @@ export const INITIAL_ANIMES: Anime[] = [
     genres: ['Action', 'Comedy', 'Horror', 'Supernatural'],
     studios: ['BUG FILMS'],
     ratingBadge: '17+',
-    episodes: generateEpisodes(24, 'Zom 100', 12)
+    episodes: generateEpisodes(24, 'Zom 100', 12, 'https://s4.anilist.co/file/anilistcdn/media/anime/banner/159831-FWfdyqpxhLli.jpg')
   }
 ];
 
